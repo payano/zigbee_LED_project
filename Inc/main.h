@@ -56,11 +56,30 @@
 
 /* Private define ------------------------------------------------------------*/
 
+#define BUTTON_1_Pin GPIO_PIN_0
+#define BUTTON_1_GPIO_Port GPIOA
+#define BUTTON_1_EXTI_IRQn EXTI0_1_IRQn
+#define SLIDER_1_Pin GPIO_PIN_1
+#define SLIDER_1_GPIO_Port GPIOA
 #define VCP_TX_Pin GPIO_PIN_2
 #define VCP_TX_GPIO_Port GPIOA
-#define SPI_CS_Pin GPIO_PIN_3
+#define BUTTON_2_Pin GPIO_PIN_3
+#define BUTTON_2_GPIO_Port GPIOA
+#define SLIDER_2_Pin GPIO_PIN_4
+#define SLIDER_2_GPIO_Port GPIOA
+#define TEMP_SENSOR_Pin GPIO_PIN_5
+#define TEMP_SENSOR_GPIO_Port GPIOA
+#define SPI_MISO_Pin GPIO_PIN_6
+#define SPI_MISO_GPIO_Port GPIOA
+#define RGB_R_Pin GPIO_PIN_7
+#define RGB_R_GPIO_Port GPIOA
+#define RGB_G_Pin GPIO_PIN_0
+#define RGB_G_GPIO_Port GPIOB
+#define RGB_B_Pin GPIO_PIN_1
+#define RGB_B_GPIO_Port GPIOB
+#define SPI_CS_Pin GPIO_PIN_8
 #define SPI_CS_GPIO_Port GPIOA
-#define SPI_INT_Pin GPIO_PIN_4
+#define SPI_INT_Pin GPIO_PIN_9
 #define SPI_INT_GPIO_Port GPIOA
 #define SPI_INT_EXTI_IRQn EXTI4_15_IRQn
 #define SWDIO_Pin GPIO_PIN_13
@@ -69,12 +88,12 @@
 #define SWCLK_GPIO_Port GPIOA
 #define VCP_RX_Pin GPIO_PIN_15
 #define VCP_RX_GPIO_Port GPIOA
-#define BUTTON_1_Pin GPIO_PIN_6
-#define BUTTON_1_GPIO_Port GPIOB
-#define BUTTON_1_EXTI_IRQn EXTI4_15_IRQn
-#define BUTTON_2_Pin GPIO_PIN_7
-#define BUTTON_2_GPIO_Port GPIOB
-#define BUTTON_2_EXTI_IRQn EXTI4_15_IRQn
+#define SPI_SCK_Pin GPIO_PIN_3
+#define SPI_SCK_GPIO_Port GPIOB
+#define LED_PANEL_Pin GPIO_PIN_4
+#define LED_PANEL_GPIO_Port GPIOB
+#define SPI_MOSI_Pin GPIO_PIN_5
+#define SPI_MOSI_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
