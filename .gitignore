@@ -1,0 +1,8 @@
+#ignore .d and .o files
+*.o
+*.d
+
+#ignore folder debug
+Debug/*
+Release/*
+/Debug/
