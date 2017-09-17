@@ -82,7 +82,7 @@ void ButtonThread(void const * argument);
 extern "C" void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                 
 
-constexpr int NUMBER_OF_MAILBOXES = 2;
+constexpr int NUMBER_OF_MAILBOXES = 1;
 constexpr int NUMBER_OF_MESSAGES  = 5;
 constexpr TickType_t xFrequency = 100;
 std::vector<QueueHandle_t> mailboxes;
@@ -104,6 +104,14 @@ int main(void)
   MX_TIM3_Init();
   MX_ADC_Init();
 
+  //CHANGE THIS WHEN USING TIMER:
+  //sConfigOC.Pulse = 40;
+
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
+
   for(int i = 0 ; i < NUMBER_OF_MAILBOXES; ++i){
 	  mailboxes.push_back(
 			  xQueueCreate(
@@ -121,12 +129,12 @@ int main(void)
   LedHandle = osThreadCreate(osThread(Led), NULL);
 
   /* definition and creation of Radio */
-  osThreadDef(Radio, RadioThread, osPriorityNormal, 0, 96);
-  RadioHandle = osThreadCreate(osThread(Radio), NULL);
+//  osThreadDef(Radio, RadioThread, osPriorityNormal, 0, 96);
+//  RadioHandle = osThreadCreate(osThread(Radio), NULL);
 
   /* definition and creation of Button */
-  osThreadDef(Button, ButtonThread, osPriorityNormal, 0, 96);
-  ButtonHandle = osThreadCreate(osThread(Button), NULL);
+//  osThreadDef(Button, ButtonThread, osPriorityNormal, 0, 96);
+//  ButtonHandle = osThreadCreate(osThread(Button), NULL);
 
   /* Start scheduler */
   osKernelStart();
@@ -140,8 +148,6 @@ int main(void)
 
 }
 
-/** System Clock Configuration
-*/
 void SystemClock_Config(void)
 {
 
@@ -273,15 +279,27 @@ static void MX_SPI1_Init(void)
 static void MX_TIM3_Init(void)
 {
 
+  TIM_ClockConfigTypeDef sClockSourceConfig;
   TIM_MasterConfigTypeDef sMasterConfig;
   TIM_OC_InitTypeDef sConfigOC;
 
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 0;
+  htim3.Init.Prescaler = 50000;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 0;
-  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  htim3.Init.Period = 60;
+  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV4;
+  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
   if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -295,7 +313,7 @@ static void MX_TIM3_Init(void)
   }
 
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 0;
+  sConfigOC.Pulse = 50;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
@@ -374,7 +392,6 @@ static void MX_GPIO_Init(void)
 
 }
 
-
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
@@ -426,6 +443,12 @@ void ButtonThread(void const * argument)
 		}
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
 	}
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+
+	//HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
 }
 
 /**
