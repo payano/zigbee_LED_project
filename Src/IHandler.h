@@ -5,12 +5,13 @@
  *      Author: johan
  */
 #pragma once
-//#include <memory>
+#include <memory>
 //forward declaring message:
 class Message;
 
 class IHandler {
 public:
+   virtual ~IHandler(){};
    virtual void run() = 0;
    virtual void setInterrupted() = 0;
    virtual bool getInterrupted() = 0;

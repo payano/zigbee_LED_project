@@ -511,14 +511,14 @@ void Mrf24j::write_long(uint16_t address, uint8_t data)
 
 void Mrf24j::interrupt(bool value){
 	//Todo fix this handler to be better implemented.
-	switch(value){
-	case true:
-		//TODO
-		//CHANGE THIS
-		HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
-		break;
-	default:
-		HAL_NVIC_DisableIRQ(EXTI4_15_IRQn);
-		break;
-	}
+//	switch(value){
+//	case true:
+//		//TODO
+//		//CHANGE THIS
+//		HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
+//		break;
+//	default:
+//		HAL_NVIC_DisableIRQ(EXTI4_15_IRQn);
+//		break;
+//	}
 }

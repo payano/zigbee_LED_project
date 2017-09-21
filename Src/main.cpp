@@ -39,9 +39,7 @@
 #include "main.h"
 #include "stm32f0xx_hal.h"
 
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
+#include "ButtonHandler.h"
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc;
@@ -113,6 +111,13 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  ButtonHandler* button1 = new ButtonHandler();
+  ButtonHandler* button2 = new ButtonHandler();
+
+  button1->run();
+  button2->run();
+
   while (1)
   {
   /* USER CODE END WHILE */
@@ -145,7 +150,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PREDIV = RCC_PREDIV_DIV1;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    _Error_Handler();
   }
 
     /**Initializes the CPU, AHB and APB busses clocks 
@@ -158,7 +163,7 @@ void SystemClock_Config(void)
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    _Error_Handler();
   }
 
     /**Configure the Systick interrupt time 
@@ -212,7 +217,7 @@ static void MX_ADC_Init(void)
   hadc.Init.Overrun = ADC_OVR_DATA_PRESERVED;
   if (HAL_ADC_Init(&hadc) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    _Error_Handler();
   }
 
     /**Configure for the selected ADC regular channel to be converted.
@@ -222,7 +227,7 @@ static void MX_ADC_Init(void)
   sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
   if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    _Error_Handler();
   }
 
     /**Configure for the selected ADC regular channel to be converted.
@@ -230,7 +235,7 @@ static void MX_ADC_Init(void)
   sConfig.Channel = ADC_CHANNEL_4;
   if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    _Error_Handler();
   }
 
     /**Configure for the selected ADC regular channel to be converted.
@@ -238,7 +243,7 @@ static void MX_ADC_Init(void)
   sConfig.Channel = ADC_CHANNEL_5;
   if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    _Error_Handler();
   }
 
 }
@@ -263,7 +268,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.NSSPMode = SPI_NSS_PULSE_ENABLE;
   if (HAL_SPI_Init(&hspi1) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    _Error_Handler();
   }
 
 }
@@ -284,25 +289,25 @@ static void MX_TIM3_Init(void)
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    _Error_Handler();
   }
 
   sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
   if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    _Error_Handler();
   }
 
   if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    _Error_Handler();
   }
 
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    _Error_Handler();
   }
 
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
@@ -311,22 +316,22 @@ static void MX_TIM3_Init(void)
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    _Error_Handler();
   }
 
   if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    _Error_Handler();
   }
 
   if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    _Error_Handler();
   }
 
   if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    _Error_Handler();
   }
 
   HAL_TIM_MspPostInit(&htim3);
@@ -408,7 +413,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   * @param  None
   * @retval None
   */
-void _Error_Handler(char * file, int line)
+void _Error_Handler()
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
