@@ -10,7 +10,7 @@
 #ifndef MRF24J_H_
 #define MRF24J_H_
 #include "main.h"
-#include "cmsis_os.h"
+
 #include <memory>
 #include <string.h>
 #include "stm32f0xx_hal.h"

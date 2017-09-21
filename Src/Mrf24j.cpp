@@ -181,7 +181,8 @@ void Mrf24j::run(){
 //	while(true){
 		char kalle[] = "abcd";
 		send16(0x4202, kalle);
-		osDelay(1000);
+		HAL_Delay(1000);
+
 //	}
 
 }
@@ -193,9 +194,9 @@ void Mrf24j::int_callback(){
 void Mrf24j::reset(void){
 	//https://github.com/karlp/Mrf24j40-arduino-library/blob/master/mrf24j.cpp#L1
 	HAL_GPIO_WritePin(mPinReset.GPIO, mPinReset.GPIO_Pin, GPIO_PIN_RESET);
-	osDelay(10);
+	HAL_Delay(10);
 	HAL_GPIO_WritePin(mPinReset.GPIO, mPinReset.GPIO_Pin, GPIO_PIN_SET);
-	osDelay(20);
+	HAL_Delay(20);
 }
 
 void Mrf24j::init(void) {
@@ -228,7 +229,7 @@ void Mrf24j::init(void) {
     // Set transmitter power - See “REGISTER 2-62: RF CONTROL 3 REGISTER (ADDRESS: 0x203)”.
     write_short(MRF_RFCTL, 0x04); //  – Reset RF state machine.
     write_short(MRF_RFCTL, 0x00); // part 2
-    osDelay(1); // delay at least 192usec
+    HAL_Delay(1); // delay at least 192usec
 }
 uint16_t Mrf24j::get_pan(void) {
     uint8_t panh = read_short(MRF_PANIDH);
