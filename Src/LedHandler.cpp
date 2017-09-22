@@ -22,12 +22,21 @@ void LedHandler::addMessage(Message* message){
 
 void LedHandler::run() {
 	//Add message to LED
+	{
 	Message sending;
 	sending.address = 23;
 	sending.value = 12;
 	mRecipients[HandlerName::Radio]->addMessage(&sending);
+	}
+	{
+	Message sending;
+	sending.address = 999;
+	sending.value = 111;
+	mRecipients[HandlerName::Radio]->addMessage(&sending);
+	}
 
 	while(mQueue.size() > 0){
+		//Update LEDS
 		Message myMess = mQueue.front();
 		myMess.address = 30;
 		mQueue.pop();

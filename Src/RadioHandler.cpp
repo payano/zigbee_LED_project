@@ -29,6 +29,7 @@ void RadioHandler::run() {
 	mRecipients[HandlerName::Led]->addMessage(&sending);
 
 	while(mQueue.size() > 0){
+		//talk to MRF24J to send radio messages.
 		Message myMess = mQueue.front();
 		myMess.address = 30;
 		mQueue.pop();

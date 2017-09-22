@@ -99,13 +99,9 @@ void SysTick_Handler(void)
 */
 void EXTI0_1_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI0_1_IRQn 0 */
-
-  /* USER CODE END EXTI0_1_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
-  /* USER CODE BEGIN EXTI0_1_IRQn 1 */
 
-  /* USER CODE END EXTI0_1_IRQn 1 */
+  HAL_NVIC_EnableIRQ(EXTI0_1_IRQn);
 }
 
 /**
@@ -113,13 +109,10 @@ void EXTI0_1_IRQHandler(void)
 */
 void EXTI2_3_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI2_3_IRQn 0 */
-
-  /* USER CODE END EXTI2_3_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_3);
-  /* USER CODE BEGIN EXTI2_3_IRQn 1 */
 
-  /* USER CODE END EXTI2_3_IRQn 1 */
+  HAL_NVIC_EnableIRQ(EXTI2_3_IRQn);
+
 }
 
 /**
@@ -127,13 +120,7 @@ void EXTI2_3_IRQHandler(void)
 */
 void EXTI4_15_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI4_15_IRQn 0 */
-
-  /* USER CODE END EXTI4_15_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_9);
-  /* USER CODE BEGIN EXTI4_15_IRQn 1 */
-
-  /* USER CODE END EXTI4_15_IRQn 1 */
 }
 
 /**
