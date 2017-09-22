@@ -30,3 +30,7 @@ bool ButtonHandler::getInterrupted() {
    return false;
 
 }
+
+void ButtonHandler::addRecipient(IHandler* recipient, HandlerName recipientName){
+   mRecipients[recipientName] = recipient;
+}

@@ -39,6 +39,10 @@
 #include "main.h"
 #include "stm32f0xx_hal.h"
 
+#include <vector>
+#include "IHandler.h"
+#include "LedHandler.h"
+#include "RadioHandler.h"
 #include "ButtonHandler.h"
 
 /* Private variables ---------------------------------------------------------*/
@@ -63,38 +67,15 @@ static void MX_NVIC_Init(void);
 
 extern "C" void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                 
-
-/* USER CODE BEGIN PFP */
-/* Private function prototypes -----------------------------------------------*/
-
-/* USER CODE END PFP */
-
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
 int main(void)
 {
-
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
   /* MCU Configuration----------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
   /* Configure the system clock */
   SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
@@ -105,21 +86,36 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
 
-  /* USER CODE BEGIN 2 */
+  // IMPORTANT TO PLACE HANDLERS IN RIGHT ORDER,
+  // CHECK IHANDLER.H
+  std::vector<IHandler*> mHandlers;
 
-  /* USER CODE END 2 */
+  IHandler* Led     = new LedHandler();
+  IHandler* radio   = new RadioHandler();
+  IHandler* button1 = new ButtonHandler();
+  IHandler* button2 = new ButtonHandler();
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
+  mHandlers.push_back(Led);
+  mHandlers.push_back(radio);
+  mHandlers.push_back(button1);
+  mHandlers.push_back(button2);
 
-  ButtonHandler* button1 = new ButtonHandler();
-  ButtonHandler* button2 = new ButtonHandler();
+  // Make it possible for classes to talk to each other.
+  mHandlers[HandlerName::Button1]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
+  mHandlers[HandlerName::Button2]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
+  mHandlers[HandlerName::Radio]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
+  mHandlers[HandlerName::Led]->addRecipient(mHandlers[HandlerName::Radio], HandlerName::Radio);
 
-  button1->run();
-  button2->run();
 
   while (1)
   {
+
+     for(IHandler* item : mHandlers){
+        item->run();
+     }
+
+     HAL_Delay(10);
+
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
