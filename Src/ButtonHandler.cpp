@@ -6,6 +6,7 @@
  */
 
 #include "ButtonHandler.h"
+#include "Message.h"
 
 ButtonHandler::ButtonHandler() {
    // TODO Auto-generated constructor stub
@@ -16,8 +17,8 @@ ButtonHandler::~ButtonHandler() {
    // TODO Auto-generated destructor stub
 }
 
-void ButtonHandler::addMessage(std::unique_ptr<Message> message){
-
+void ButtonHandler::addMessage(Message* message){
+	//mQueue.push(*message);
 }
 
 void ButtonHandler::run() {

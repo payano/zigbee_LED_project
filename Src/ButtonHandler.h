@@ -16,7 +16,7 @@ private:
 public:
    ButtonHandler();
    virtual ~ButtonHandler();
-   void addMessage(std::unique_ptr<Message> message) override;
+   void addMessage(Message* message) override;
    void run() override;
    void setInterrupted() override;
    bool getInterrupted() override;

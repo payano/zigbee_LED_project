@@ -6,6 +6,7 @@
  */
 
 #include "LedHandler.h"
+#include "Message.h"
 
 LedHandler::LedHandler() {
    // TODO Auto-generated constructor stub
@@ -15,11 +16,22 @@ LedHandler::LedHandler() {
 LedHandler::~LedHandler() {
    // TODO Auto-generated destructor stub
 }
-void LedHandler::addMessage(std::unique_ptr<Message> message){
-
+void LedHandler::addMessage(Message* message){
+	mQueue.push(*message);
 }
 
 void LedHandler::run() {
+	//Add message to LED
+	Message sending;
+	sending.address = 23;
+	sending.value = 12;
+	mRecipients[HandlerName::Radio]->addMessage(&sending);
+
+	while(mQueue.size() > 0){
+		Message myMess = mQueue.front();
+		myMess.address = 30;
+		mQueue.pop();
+	}
 
 }
 void LedHandler::setInterrupted() {

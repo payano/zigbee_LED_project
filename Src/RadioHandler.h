@@ -9,13 +9,16 @@
 
 #include "IHandler.h"
 #include <memory>
+#include <queue>
+
 class RadioHandler: public IHandler {
 private:
    IHandler* mRecipients[HandlerName::SIZE];
+   std::queue<Message> mQueue;
 public:
    RadioHandler();
    virtual ~RadioHandler();
-   void addMessage(std::unique_ptr<Message> message) override;
+   void addMessage(Message* message) override;
    void run() override;
    void setInterrupted() override;
    bool getInterrupted() override;

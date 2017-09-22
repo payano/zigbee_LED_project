@@ -78,13 +78,13 @@ void PendSV_Handler(void)
 */
 void SysTick_Handler(void)
 {
-   //BUTTON 1
+  /* USER CODE BEGIN SysTick_IRQn 0 */
 
-   /* USER CODE END SysTick_IRQn 0 */
-   HAL_SYSTICK_IRQHandler();
-   /* USER CODE BEGIN SysTick_IRQn 1 */
+  /* USER CODE END SysTick_IRQn 0 */
+  HAL_SYSTICK_IRQHandler();
+  /* USER CODE BEGIN SysTick_IRQn 1 */
 
-   /* USER CODE END SysTick_IRQn 1 */
+  /* USER CODE END SysTick_IRQn 1 */
 }
 
 /******************************************************************************/
@@ -99,8 +99,7 @@ void SysTick_Handler(void)
 */
 void EXTI0_1_IRQHandler(void)
 {
-
-   //BUTTON 2
+  /* USER CODE BEGIN EXTI0_1_IRQn 0 */
 
   /* USER CODE END EXTI0_1_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
@@ -128,8 +127,7 @@ void EXTI2_3_IRQHandler(void)
 */
 void EXTI4_15_IRQHandler(void)
 {
-
-   //SPI
+  /* USER CODE BEGIN EXTI4_15_IRQn 0 */
 
   /* USER CODE END EXTI4_15_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_9);
