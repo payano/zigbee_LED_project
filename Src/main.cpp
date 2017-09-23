@@ -102,7 +102,12 @@ int main(void)
   mHandlers[HandlerName::Radio]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
   mHandlers[HandlerName::Led]->addRecipient(mHandlers[HandlerName::Radio], HandlerName::Radio);
 
+  HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_3);
+  HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_4);
   //HAL_ADC_Start(&hadc);
+
   HAL_ADC_Start_DMA(&hadc, (uint32_t*)ADC_BUF,2);
   //HAL_ADC_Start_IT(&hadc);
 
@@ -301,7 +306,7 @@ static void MX_TIM3_Init(void)
   }
 
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 50;
+  sConfigOC.Pulse = 20;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
