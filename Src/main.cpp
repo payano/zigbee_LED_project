@@ -47,19 +47,18 @@
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc;
+DMA_HandleTypeDef hdma_adc;
 
 SPI_HandleTypeDef hspi1;
 
 TIM_HandleTypeDef htim3;
 
-/* USER CODE BEGIN PV */
-/* Private variables ---------------------------------------------------------*/
-
-/* USER CODE END PV */
+uint32_t ADC_BUF[3];
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_ADC_Init(void);
@@ -78,6 +77,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_SPI1_Init();
   MX_TIM3_Init();
   MX_ADC_Init();
@@ -102,6 +102,9 @@ int main(void)
   mHandlers[HandlerName::Radio]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
   mHandlers[HandlerName::Led]->addRecipient(mHandlers[HandlerName::Radio], HandlerName::Radio);
 
+  //HAL_ADC_Start(&hadc);
+  HAL_ADC_Start_DMA(&hadc, (uint32_t*)ADC_BUF,2);
+  //HAL_ADC_Start_IT(&hadc);
 
   while (1)
   {
@@ -110,8 +113,25 @@ int main(void)
         item->run();
      }
 
-     HAL_Delay(10);
+ 	HAL_Delay(10);
   }
+
+}
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
+	uint32_t values[3];
+	if(hadc->Instance == ADC1){
+		values[0] = ADC_BUF[0];
+		values[1] = ADC_BUF[1];
+		values[2] = ADC_BUF[2];
+		//HAL_ADC_Start_DMA(hadc, (uint32_t*)ADC_BUF,2);
+
+	}
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+	auto kalle = 16;
+
 }
 
 /** System Clock Configuration
@@ -194,7 +214,7 @@ static void MX_ADC_Init(void)
     */
   sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_7CYCLES_5;
   if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -252,7 +272,7 @@ static void MX_TIM3_Init(void)
   TIM_OC_InitTypeDef sConfigOC;
 
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 4799;
+  htim3.Init.Prescaler = 479;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim3.Init.Period = 99;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV4;
@@ -305,6 +325,21 @@ static void MX_TIM3_Init(void)
   }
 
   HAL_TIM_MspPostInit(&htim3);
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Channel1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
 
 }
 
