@@ -86,7 +86,8 @@ int main(void)
 
   // IMPORTANT TO PLACE HANDLERS IN RIGHT ORDER,
   // CHECK IHANDLER.H
-  std::vector<IHandler*> mHandlers;
+  // TODO: Removed vector and using array instead, untested!
+  IHandler* mHandlers[HandlerName::SIZE];
 
   InterruptHandler* Interrupt = new InterruptHandler();
   LedHandler* Led             = new LedHandler();
@@ -95,11 +96,11 @@ int main(void)
   ButtonHandler* button2      = new ButtonHandler();
 
   //Right order is important.
-  mHandlers.push_back(Interrupt);
-  mHandlers.push_back(Led);
-  mHandlers.push_back(radio);
-  mHandlers.push_back(button1);
-  mHandlers.push_back(button2);
+  mHandlers[HandlerName::Interrupt] = Interrupt;
+  mHandlers[HandlerName::Led] = Led;
+  mHandlers[HandlerName::Radio] = radio;
+  mHandlers[HandlerName::Button1] = button1;
+  mHandlers[HandlerName::Button2] = button2;
 
   // Add adc buffer to Interrupthandler:
   // TODO: not tested yet
