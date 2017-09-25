@@ -115,6 +115,12 @@ int main(void)
   mHandlers[HandlerName::Radio]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
   mHandlers[HandlerName::Led]->addRecipient(mHandlers[HandlerName::Radio], HandlerName::Radio);
 
+  // Enable interrupt:
+  /* EXTI interrupt init*/
+  HAL_NVIC_EnableIRQ(EXTI0_1_IRQn);
+  HAL_NVIC_EnableIRQ(EXTI2_3_IRQn);
+  HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
+
   // Start pwm:
   HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_2);
