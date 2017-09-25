@@ -8,7 +8,6 @@
 #pragma once
 
 #include "IHandler.h"
-#include <memory>
 #include <queue>
 
 class RadioHandler: public IHandler {

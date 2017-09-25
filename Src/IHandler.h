@@ -9,13 +9,14 @@
 //forward declaring message:
 class Message;
 
-typedef enum {
-   Led,
-   Radio,
-   Button1,
-   Button2,
-   SIZE
-} HandlerName;
+enum HandlerName{
+  Interrupt, // don't send messages to interrupt, it will not be read.
+  Led,
+  Radio,
+  Button1,
+  Button2,
+  SIZE
+} ;
 
 class IHandler {
 public:

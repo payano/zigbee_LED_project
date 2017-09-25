@@ -44,6 +44,7 @@
 #include "LedHandler.h"
 #include "RadioHandler.h"
 #include "ButtonHandler.h"
+#include "InterruptHandler.h"
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc;
@@ -53,7 +54,8 @@ SPI_HandleTypeDef hspi1;
 
 TIM_HandleTypeDef htim3;
 
-uint32_t ADC_BUF[3];
+constexpr int ADC_BUF_LEN = 3;
+uint32_t ADC_BUF[ADC_BUF_LEN];
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -86,30 +88,43 @@ int main(void)
   // CHECK IHANDLER.H
   std::vector<IHandler*> mHandlers;
 
-  IHandler* Led     = new LedHandler();
-  IHandler* radio   = new RadioHandler();
-  IHandler* button1 = new ButtonHandler();
-  IHandler* button2 = new ButtonHandler();
+  InterruptHandler* Interrupt = new InterruptHandler();
+  LedHandler* Led             = new LedHandler();
+  RadioHandler* radio         = new RadioHandler();
+  ButtonHandler* button1      = new ButtonHandler();
+  ButtonHandler* button2      = new ButtonHandler();
 
+  //Right order is important.
+  mHandlers.push_back(Interrupt);
   mHandlers.push_back(Led);
   mHandlers.push_back(radio);
   mHandlers.push_back(button1);
   mHandlers.push_back(button2);
 
+  // Add adc buffer to Interrupthandler:
+  // TODO: not tested yet
+  Interrupt->addAdcBuffer(ADC_BUF,ADC_BUF_LEN);
   // Make it possible for classes to talk to each other.
+  //button reads slider and pushed button.
+  mHandlers[HandlerName::Interrupt]->addRecipient(mHandlers[HandlerName::Button1],HandlerName::Button1);
+  mHandlers[HandlerName::Interrupt]->addRecipient(mHandlers[HandlerName::Button2],HandlerName::Button2);
+  mHandlers[HandlerName::Interrupt]->addRecipient(mHandlers[HandlerName::Radio],HandlerName::Radio);
+
   mHandlers[HandlerName::Button1]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
   mHandlers[HandlerName::Button2]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
   mHandlers[HandlerName::Radio]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
   mHandlers[HandlerName::Led]->addRecipient(mHandlers[HandlerName::Radio], HandlerName::Radio);
 
+  // Start pwm:
   HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_4);
-  //HAL_ADC_Start(&hadc);
 
+  // Start ADC:
+  // ADC will go to a callback method: void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
   HAL_ADC_Start_DMA(&hadc, (uint32_t*)ADC_BUF,2);
-  //HAL_ADC_Start_IT(&hadc);
+
 
   while (1)
   {
@@ -124,18 +139,21 @@ int main(void)
 }
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
-	uint32_t values[3];
-	if(hadc->Instance == ADC1){
-		values[0] = ADC_BUF[0];
-		values[1] = ADC_BUF[1];
-		values[2] = ADC_BUF[2];
-		//HAL_ADC_Start_DMA(hadc, (uint32_t*)ADC_BUF,2);
+  //uint32_t values[3];
+  if(hadc->Instance == ADC1){
+    //this is the way for the ADC (interrupt)
+    InterruptHandler::setInterrupted(HandlerName::Interrupt);
+    //InterruptHandler::putAdcData(ADC_BUF);
+    //values[0] = ADC_BUF[0]; // potentiometer 1
+    //values[1] = ADC_BUF[1]; // potentiometer 1
+    //values[2] = ADC_BUF[2]; // temperature sensor
+    //HAL_ADC_Start_DMA(hadc, (uint32_t*)ADC_BUF,2);
 
-	}
+  }
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
-	auto kalle = 16;
+  //auto kalle = 16;
 
 }
 
@@ -306,7 +324,7 @@ static void MX_TIM3_Init(void)
   }
 
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 20;
+  sConfigOC.Pulse = 00;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)

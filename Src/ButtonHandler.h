@@ -8,7 +8,6 @@
 #pragma once
 
 #include "IHandler.h"
-#include <memory>
 
 class ButtonHandler: public IHandler {
 private:
