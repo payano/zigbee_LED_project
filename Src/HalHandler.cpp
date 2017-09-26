@@ -101,6 +101,10 @@ bool HalHandler::getInterrupted() {
    return false;
 
 }
+void HalHandler::enableInterrupt(HandlerName recipient){
+  //enable interrupts.
+}
+
 void HalHandler::addRecipient(IHandler* recipient, HandlerName recipientName){
    mRecipients[recipientName] = recipient;
 }

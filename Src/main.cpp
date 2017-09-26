@@ -121,8 +121,14 @@ int main(void)
   mHandlers[HandlerName::Hal]->addRecipient(mHandlers[HandlerName::Radio],HandlerName::Radio);
 
   mHandlers[HandlerName::Button1]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
+  mHandlers[HandlerName::Button1]->addRecipient(mHandlers[HandlerName::Hal], HandlerName::Hal);
+
   mHandlers[HandlerName::Button2]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
+  mHandlers[HandlerName::Button2]->addRecipient(mHandlers[HandlerName::Hal], HandlerName::Hal);
+
   mHandlers[HandlerName::Radio]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
+  mHandlers[HandlerName::Radio]->addRecipient(mHandlers[HandlerName::Hal], HandlerName::Hal);
+
   mHandlers[HandlerName::Led]->addRecipient(mHandlers[HandlerName::Radio], HandlerName::Radio);
 
   // Enable interrupt:

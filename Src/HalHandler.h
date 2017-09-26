@@ -29,5 +29,6 @@ public:
   void setInterrupted() override;
   static void setInterrupted(HandlerName handler);
   bool getInterrupted() override;
+  void enableInterrupt(HandlerName recipient);
   void addRecipient(IHandler* recipient, HandlerName recipientName) override;
 };

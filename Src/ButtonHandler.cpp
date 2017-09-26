@@ -7,6 +7,7 @@
 
 #include "ButtonHandler.h"
 #include "Message.h"
+#include "HalHandler.h"
 
 ButtonHandler::ButtonHandler() {
    // TODO Auto-generated constructor stub
@@ -23,6 +24,7 @@ void ButtonHandler::addMessage(Message* message){
 
 void ButtonHandler::run() {
 
+  //int hal = dynamic_cast<HalHandler*>(mRecipients[HandlerName::Hal]);
 }
 void ButtonHandler::setInterrupted() {
 
