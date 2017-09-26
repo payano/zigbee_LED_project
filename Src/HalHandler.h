@@ -10,7 +10,7 @@
 
 constexpr int INTERRUPT_LENGTH = 3;
 
-class InterruptHandler: public IHandler {
+class HalHandler: public IHandler {
 private:
   IHandler* mRecipients[HandlerName::SIZE];
   static bool sInterrupted[HandlerName::SIZE]; //static
@@ -18,8 +18,8 @@ private:
   uint32_t mAdcBufferLen;
 
 public:
-  InterruptHandler();
-  virtual ~InterruptHandler();
+  HalHandler();
+  virtual ~HalHandler();
 
   //static void putInterruptData(uint32_t InterruptIncData[3]);
   void addAdcBuffer(uint32_t* buffer, int len);

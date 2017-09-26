@@ -5,16 +5,14 @@
  *      Author: johan
  */
 
-#ifndef MESSAGE_H_
-#define MESSAGE_H_
+#pragma once
 
-class Message {
-public:
-	int address;
+/**
+ * Address list:
+ * 16 bit int.
+ * 0b0 =
+ */
+struct Message {
+	uint16_t address;
 	int value;
-	Message(int address, int value);
-	Message();
-	virtual ~Message();
 };
-
-#endif /* MESSAGE_H_ */

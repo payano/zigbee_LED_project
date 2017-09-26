@@ -44,7 +44,7 @@
 #include "LedHandler.h"
 #include "RadioHandler.h"
 #include "ButtonHandler.h"
-#include "InterruptHandler.h"
+#include "HalHandler.h"
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc;
@@ -87,16 +87,25 @@ int main(void)
   // IMPORTANT TO PLACE HANDLERS IN RIGHT ORDER,
   // CHECK IHANDLER.H
   // TODO: Removed vector and using array instead, untested!
+
+  /**
+   * make --no-print-directory post-build
+    Generating binary and Printing size information:
+    arm-none-eabi-objcopy -O binary "zigbee_LED_project.elf" "zigbee_LED_project.bin"
+    arm-none-eabi-size "zigbee_LED_project.elf"
+       text     data      bss      dec      hex  filename
+      17516      144     1380    19040     4a60  zigbee_LED_project.elf
+   */
   IHandler* mHandlers[HandlerName::SIZE];
 
-  InterruptHandler* Interrupt = new InterruptHandler();
+  HalHandler* Hal             = new HalHandler();
   LedHandler* Led             = new LedHandler();
   RadioHandler* radio         = new RadioHandler();
   ButtonHandler* button1      = new ButtonHandler();
   ButtonHandler* button2      = new ButtonHandler();
 
   //Right order is important.
-  mHandlers[HandlerName::Interrupt] = Interrupt;
+  mHandlers[HandlerName::Hal] = Hal;
   mHandlers[HandlerName::Led] = Led;
   mHandlers[HandlerName::Radio] = radio;
   mHandlers[HandlerName::Button1] = button1;
@@ -104,12 +113,12 @@ int main(void)
 
   // Add adc buffer to Interrupthandler:
   // TODO: not tested yet
-  Interrupt->addAdcBuffer(ADC_BUF,ADC_BUF_LEN);
+  Hal->addAdcBuffer(ADC_BUF,ADC_BUF_LEN);
   // Make it possible for classes to talk to each other.
   //button reads slider and pushed button.
-  mHandlers[HandlerName::Interrupt]->addRecipient(mHandlers[HandlerName::Button1],HandlerName::Button1);
-  mHandlers[HandlerName::Interrupt]->addRecipient(mHandlers[HandlerName::Button2],HandlerName::Button2);
-  mHandlers[HandlerName::Interrupt]->addRecipient(mHandlers[HandlerName::Radio],HandlerName::Radio);
+  mHandlers[HandlerName::Hal]->addRecipient(mHandlers[HandlerName::Button1],HandlerName::Button1);
+  mHandlers[HandlerName::Hal]->addRecipient(mHandlers[HandlerName::Button2],HandlerName::Button2);
+  mHandlers[HandlerName::Hal]->addRecipient(mHandlers[HandlerName::Radio],HandlerName::Radio);
 
   mHandlers[HandlerName::Button1]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
   mHandlers[HandlerName::Button2]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
@@ -146,22 +155,12 @@ int main(void)
 }
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
-  //uint32_t values[3];
   if(hadc->Instance == ADC1){
-    //this is the way for the ADC (interrupt)
-    InterruptHandler::setInterrupted(HandlerName::Interrupt);
-    //InterruptHandler::putAdcData(ADC_BUF);
-    //values[0] = ADC_BUF[0]; // potentiometer 1
-    //values[1] = ADC_BUF[1]; // potentiometer 1
-    //values[2] = ADC_BUF[2]; // temperature sensor
-    //HAL_ADC_Start_DMA(hadc, (uint32_t*)ADC_BUF,2);
-
+    HalHandler::setInterrupted(HandlerName::Hal);
   }
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
-  //auto kalle = 16;
-
 }
 
 /** System Clock Configuration

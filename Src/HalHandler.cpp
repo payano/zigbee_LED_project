@@ -1,36 +1,37 @@
 /*
- * InterruptHandler.cpp
+ * HalHandler.cpp
  *
  *  Created on: Sep 25, 2017
  *      Author: johan
  */
 
-#include "InterruptHandler.h"
+#include "HalHandler.h"
+
 #include "Message.h"
 
-bool InterruptHandler::sInterrupted[HandlerName::SIZE] = {false};
+bool HalHandler::sInterrupted[HandlerName::SIZE] = {false};
 
-InterruptHandler::InterruptHandler():
+HalHandler::HalHandler():
   mAdcBuffer(nullptr),
   mAdcBufferLen(0){
   // TODO Auto-generated constructor stub
 }
 
-InterruptHandler::~InterruptHandler() {
+HalHandler::~HalHandler() {
   // TODO Auto-generated destructor stub
 }
 
-void InterruptHandler::addAdcBuffer(uint32_t* buffer, int len){
+void HalHandler::addAdcBuffer(uint32_t* buffer, int len){
   //TODO untested:
   mAdcBuffer = buffer;
   mAdcBufferLen = len;
 }
 
-void InterruptHandler::addMessage(Message* message){
+void HalHandler::addMessage(Message* message){
    //do nothing
 }
 
-void InterruptHandler::run() {
+void HalHandler::run() {
 
   // TODO: untested:
   //Check ADC:
@@ -38,7 +39,7 @@ void InterruptHandler::run() {
   // 1 = Button 2 (potentiometer)
   // 2 = Temperature sensor
 
-  if(sInterrupted[HandlerName::Interrupt]){
+  if(sInterrupted[HandlerName::Hal]){
     {
       // generate message
       Message message;
@@ -86,20 +87,20 @@ void InterruptHandler::run() {
   }
 }
 
-void InterruptHandler::setInterrupted() {
+void HalHandler::setInterrupted() {
   //do nothing
 }
 
-void InterruptHandler::setInterrupted(HandlerName handler){
+void HalHandler::setInterrupted(HandlerName handler){
   //got an interrupt
   sInterrupted[handler] = true;
 }
 
-bool InterruptHandler::getInterrupted() {
+bool HalHandler::getInterrupted() {
   //do nothing
    return false;
 
 }
-void InterruptHandler::addRecipient(IHandler* recipient, HandlerName recipientName){
+void HalHandler::addRecipient(IHandler* recipient, HandlerName recipientName){
    mRecipients[recipientName] = recipient;
 }

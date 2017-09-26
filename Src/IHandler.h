@@ -10,7 +10,7 @@
 class Message;
 
 enum HandlerName{
-  Interrupt, // don't send messages to interrupt, it will not be read.
+  Hal, // don't send messages to interrupt, it will not be read.
   Led,
   Radio,
   Button1,
