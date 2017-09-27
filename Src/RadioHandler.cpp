@@ -8,7 +8,8 @@
 #include "RadioHandler.h"
 #include "Message.h"
 
-RadioHandler::RadioHandler() {
+RadioHandler::RadioHandler(HandlerName whoami):
+               mWhoami(whoami){
    // TODO Auto-generated constructor stub
 
 }

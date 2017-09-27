@@ -9,7 +9,8 @@
 #include "Message.h"
 #include "HalHandler.h"
 
-ButtonHandler::ButtonHandler() {
+ButtonHandler::ButtonHandler(HandlerName whoami):
+                      mWhoami(whoami){
    // TODO Auto-generated constructor stub
 
 }
@@ -24,7 +25,9 @@ void ButtonHandler::addMessage(Message* message){
 
 void ButtonHandler::run() {
 
-  //int hal = dynamic_cast<HalHandler*>(mRecipients[HandlerName::Hal]);
+  HalHandler* hal = static_cast<HalHandler*>(mRecipients[HandlerName::Hal]);
+  hal->enableInterrupt(mWhoami);
+
 }
 void ButtonHandler::setInterrupted() {
 

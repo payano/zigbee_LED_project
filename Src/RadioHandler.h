@@ -14,8 +14,9 @@ class RadioHandler: public IHandler {
 private:
    IHandler* mRecipients[HandlerName::SIZE];
    std::queue<Message> mQueue;
+   HandlerName mWhoami;
 public:
-   RadioHandler();
+   RadioHandler(HandlerName whoami);
    virtual ~RadioHandler();
    void addMessage(Message* message) override;
    void run() override;

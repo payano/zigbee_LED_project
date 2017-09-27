@@ -7,6 +7,8 @@
 
 #pragma once
 #include "IHandler.h"
+#include "stm32f0xx_hal.h"
+#include "stm32f0xx_hal_adc.h"
 
 constexpr int INTERRUPT_LENGTH = 3;
 
@@ -16,9 +18,11 @@ private:
   static bool sInterrupted[HandlerName::SIZE]; //static
   uint32_t* mAdcBuffer;
   uint32_t mAdcBufferLen;
+  HandlerName mWhoami;
+  ADC_HandleTypeDef *hadc;
 
 public:
-  HalHandler();
+  HalHandler(HandlerName whoami, ADC_HandleTypeDef *hadc);
   virtual ~HalHandler();
 
   //static void putInterruptData(uint32_t InterruptIncData[3]);
@@ -29,6 +33,7 @@ public:
   void setInterrupted() override;
   static void setInterrupted(HandlerName handler);
   bool getInterrupted() override;
-  void enableInterrupt(HandlerName recipient);
+  virtual void enableInterrupt(HandlerName recipient);
   void addRecipient(IHandler* recipient, HandlerName recipientName) override;
+
 };

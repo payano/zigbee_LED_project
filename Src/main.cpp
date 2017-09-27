@@ -96,13 +96,14 @@ int main(void)
        text     data      bss      dec      hex  filename
       17516      144     1380    19040     4a60  zigbee_LED_project.elf
    */
+
   IHandler* mHandlers[HandlerName::SIZE];
 
-  HalHandler* Hal             = new HalHandler();
-  LedHandler* Led             = new LedHandler();
-  RadioHandler* radio         = new RadioHandler();
-  ButtonHandler* button1      = new ButtonHandler();
-  ButtonHandler* button2      = new ButtonHandler();
+  HalHandler* Hal             = new HalHandler(HandlerName::Hal, &hadc);
+  LedHandler* Led             = new LedHandler(HandlerName::Led);
+  RadioHandler* radio         = new RadioHandler(HandlerName::Radio);
+  ButtonHandler* button1      = new ButtonHandler(HandlerName::Button1);
+  ButtonHandler* button2      = new ButtonHandler(HandlerName::Button2);
 
   //Right order is important.
   mHandlers[HandlerName::Hal] = Hal;

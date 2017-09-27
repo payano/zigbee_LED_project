@@ -8,7 +8,8 @@
 #include "LedHandler.h"
 #include "Message.h"
 
-LedHandler::LedHandler() {
+LedHandler::LedHandler(HandlerName whoami):
+        mWhoami(whoami){
    // TODO Auto-generated constructor stub
 
 }

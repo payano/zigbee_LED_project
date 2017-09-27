@@ -8,15 +8,14 @@
 #include <memory>
 //forward declaring message:
 class Message;
-
-enum HandlerName{
+enum HandlerName {
   Hal, // don't send messages to interrupt, it will not be read.
   Led,
   Radio,
   Button1,
   Button2,
   SIZE
-} ;
+};
 
 class IHandler {
 public:

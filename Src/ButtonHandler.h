@@ -12,8 +12,9 @@
 class ButtonHandler: public IHandler {
 private:
    IHandler* mRecipients[HandlerName::SIZE];
+   HandlerName mWhoami;
 public:
-   ButtonHandler();
+   ButtonHandler(HandlerName whoami);
    virtual ~ButtonHandler();
    void addMessage(Message* message) override;
    void run() override;

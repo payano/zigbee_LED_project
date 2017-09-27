@@ -14,9 +14,10 @@ class LedHandler: public IHandler {
 private:
    IHandler* mRecipients[HandlerName::SIZE];
    std::queue<Message> mQueue;
+   HandlerName mWhoami;
 
 public:
-   LedHandler();
+   LedHandler(HandlerName whoami);
    virtual ~LedHandler();
    void addMessage(Message* message) override;
    void run() override;
