@@ -107,7 +107,7 @@ int main(void)
    */
   IHandler* mHandlers[HandlerName::SIZE];
 
-  HalHandler* Hal             = new HalHandler(HandlerName::Hal, &hadc);
+  HalHandler* Hal             = new HalHandler(HandlerName::Hal, &hadc, &htim3);
   LedHandler* Led             = new LedHandler(HandlerName::Led, Hal);
   RadioHandler* radio         = new RadioHandler(HandlerName::Radio, Hal);
   ButtonHandler* button1      = new ButtonHandler(HandlerName::Button1, Hal);

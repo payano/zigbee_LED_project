@@ -19,40 +19,60 @@ LedHandler::LedHandler(HandlerName whoami, HalHandler* halHandler):
 LedHandler::~LedHandler() {
    // TODO Auto-generated destructor stub
 }
-void LedHandler::addMessage(Message* message){
+void LedHandler::addMessage(MessagePkg::Message* message){
 	mQueue.push(*message);
 }
 
 void LedHandler::run() {
-	//Add message to LED
-	{
-	Message sending;
-	sending.address = 23;
-	sending.value = 12;
-	mRecipients[HandlerName::Radio]->addMessage(&sending);
-	}
-	{
-	Message sending;
-	sending.address = 999;
-	sending.value = 111;
-	mRecipients[HandlerName::Radio]->addMessage(&sending);
-	}
-
 	while(mQueue.size() > 0){
-		//Update LEDS
-		Message myMess = mQueue.front();
-		myMess.address = 30;
-		mQueue.pop();
+	  // Get element from queue
+	  MessagePkg::Message message = mQueue.front();
+	  switch(message.address){
+	  case MessagePkg::Led_Panel_Value:
+	    if(message.write){
+	      //radio and button can write.
+	      mHalHandler->setPWM(Channel::PANEL, &message.value);
+	    }
+	    // only radio is requesting this
+	    // use the same message and send it.
+	    mHalHandler->getPWM(Channel::PANEL, &message.value);
+	    // send it to radio
+	    mRecipients[HandlerName::Radio]->addMessage(&message);
+	    break;
+	  case MessagePkg::RGB_R_Value:
+	    if(message.write){
+	      mHalHandler->setPWM(Channel::RGB_R, &message.value);
+	    }
+	    // only radio is requesting this
+	    mHalHandler->getPWM(Channel::RGB_R, &message.value);
+	    mRecipients[HandlerName::Radio]->addMessage(&message);
+	    break;
+	  case MessagePkg::RGB_G_Value:
+	    if(message.write){
+	      mHalHandler->setPWM(Channel::RGB_G, &message.value);
+	    }
+	    // only radio is requesting this
+	    mHalHandler->getPWM(Channel::RGB_G, &message.value);
+	    mRecipients[HandlerName::Radio]->addMessage(&message);
+	    break;
+	  case MessagePkg::RGB_B_Value:
+	    if(message.write){
+	      mHalHandler->setPWM(Channel::RGB_B, &message.value);
+	    }
+       // only radio is requesting this
+	    mHalHandler->getPWM(Channel::RGB_B, &message.value);
+	    mRecipients[HandlerName::Radio]->addMessage(&message);
+	    break;
+
+	  default:
+	    break;
+	  }
+	  // Remove element from queue
+	  mQueue.pop();
 	}
 
 }
-void LedHandler::setInterrupted() {
 
-}
-bool LedHandler::getInterrupted() {
-   return false;
-
-}
 void LedHandler::addRecipient(IHandler* recipient, HandlerName recipientName){
    mRecipients[recipientName] = recipient;
 }
