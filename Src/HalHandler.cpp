@@ -118,28 +118,58 @@ bool HalHandler::getInterrupted() {
    return false;
 
 }
-void HalHandler::enableInterrupt(HandlerName recipient){
-  //enable interrupts.
-  switch(recipient){
+bool HalHandler::getInterrupted(const HandlerName *recipient) {
+  //do nothing
+   return false;
+
+}
+void HalHandler::enableInterrupt(const HandlerName *recipient){
+  switch(*recipient){
   Hal:
   // this is to be handled some how.
   HAL_ADC_Start_DMA(hadc, mAdcBuffer,3);
   break;
   Led:
+  //led has PWM, no interrupts.
   break;
   Radio:
+  HAL_NVIC_EnableIRQ(radio);
   break;
   Button1:
-  HAL_NVIC_EnableIRQ(EXTI0_1_IRQn);
+  HAL_NVIC_EnableIRQ(button[0]);
   break;
   Button2:
-  HAL_NVIC_EnableIRQ(EXTI2_3_IRQn);
+  HAL_NVIC_EnableIRQ(button[1]);
   break;
   default:
     // temp sensor?
     // here it is anyway
-    HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
+    // do nothing
+    break;
+  }
+}
 
+void HalHandler::disableInterrupt(const HandlerName *recipient){
+  switch(*recipient){
+  Hal:
+  // this is to be handled some how.
+  HAL_ADC_Start_DMA(hadc, mAdcBuffer,3);
+  break;
+  Led:
+  //led has PWM, no interrupts.
+  break;
+  Radio:
+  HAL_NVIC_DisableIRQ(radio);
+  break;
+  Button1:
+  HAL_NVIC_DisableIRQ(button[0]);
+  break;
+  Button2:
+  HAL_NVIC_DisableIRQ(button[1]);
+  break;
+  default:
+    // temp sensor?
+    // here it is anyway
     // do nothing
     break;
   }

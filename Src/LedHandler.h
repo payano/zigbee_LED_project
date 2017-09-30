@@ -15,9 +15,10 @@ private:
    IHandler* mRecipients[HandlerName::SIZE];
    std::queue<Message> mQueue;
    HandlerName mWhoami;
+   HalHandler* mHalHandler;
 
 public:
-   LedHandler(HandlerName whoami);
+   LedHandler(HandlerName whoami, HalHandler* halHandler);
    virtual ~LedHandler();
    void addMessage(Message* message) override;
    void run() override;

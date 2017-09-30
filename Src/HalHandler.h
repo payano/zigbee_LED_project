@@ -21,6 +21,9 @@ private:
   HandlerName mWhoami;
   ADC_HandleTypeDef *hadc;
 
+  const IRQn_Type button[2] = {EXTI0_1_IRQn, EXTI2_3_IRQn};
+  const IRQn_Type radio = EXTI4_15_IRQn;
+
 public:
   HalHandler(HandlerName whoami, ADC_HandleTypeDef *hadc);
   virtual ~HalHandler();
@@ -33,7 +36,11 @@ public:
   void setInterrupted() override;
   static void setInterrupted(HandlerName handler);
   bool getInterrupted() override;
-  virtual void enableInterrupt(HandlerName recipient);
+  virtual bool getInterrupted(const HandlerName *recipient);
+
+  virtual void enableInterrupt(const HandlerName *recipient);
+  virtual void disableInterrupt(const HandlerName *recipient);
+
   void addRecipient(IHandler* recipient, HandlerName recipientName) override;
 
 };

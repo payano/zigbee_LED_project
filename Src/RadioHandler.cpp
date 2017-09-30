@@ -7,9 +7,11 @@
 
 #include "RadioHandler.h"
 #include "Message.h"
+#include "HalHandler.h"
 
-RadioHandler::RadioHandler(HandlerName whoami):
-               mWhoami(whoami){
+RadioHandler::RadioHandler(HandlerName whoami, HalHandler* halHandler):
+               mWhoami(whoami),
+               mHalHandler(halHandler){
    // TODO Auto-generated constructor stub
 
 }

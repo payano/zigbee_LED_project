@@ -8,13 +8,13 @@
 #pragma once
 
 #include "IHandler.h"
-
 class ButtonHandler: public IHandler {
 private:
    IHandler* mRecipients[HandlerName::SIZE];
    HandlerName mWhoami;
+   HalHandler* mHalHandler;
 public:
-   ButtonHandler(HandlerName whoami);
+   ButtonHandler(HandlerName whoami, HalHandler* halHandler);
    virtual ~ButtonHandler();
    void addMessage(Message* message) override;
    void run() override;

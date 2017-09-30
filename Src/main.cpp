@@ -97,13 +97,21 @@ int main(void)
       17516      144     1380    19040     4a60  zigbee_LED_project.elf
    */
 
+  /** 2017-09-30
+   * make --no-print-directory post-build
+    Generating binary and Printing size information:
+    arm-none-eabi-objcopy -O binary "zigbee_LED_project.elf" "zigbee_LED_project.bin"
+    arm-none-eabi-size "zigbee_LED_project.elf"
+       text     data      bss      dec      hex  filename
+      17924      144     1380    19448     4bf8  zigbee_LED_project.elf
+   */
   IHandler* mHandlers[HandlerName::SIZE];
 
   HalHandler* Hal             = new HalHandler(HandlerName::Hal, &hadc);
-  LedHandler* Led             = new LedHandler(HandlerName::Led);
-  RadioHandler* radio         = new RadioHandler(HandlerName::Radio);
-  ButtonHandler* button1      = new ButtonHandler(HandlerName::Button1);
-  ButtonHandler* button2      = new ButtonHandler(HandlerName::Button2);
+  LedHandler* Led             = new LedHandler(HandlerName::Led, Hal);
+  RadioHandler* radio         = new RadioHandler(HandlerName::Radio, Hal);
+  ButtonHandler* button1      = new ButtonHandler(HandlerName::Button1, Hal);
+  ButtonHandler* button2      = new ButtonHandler(HandlerName::Button2, Hal);
 
   //Right order is important.
   mHandlers[HandlerName::Hal] = Hal;
@@ -122,13 +130,9 @@ int main(void)
   mHandlers[HandlerName::Hal]->addRecipient(mHandlers[HandlerName::Radio],HandlerName::Radio);
 
   mHandlers[HandlerName::Button1]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
-  mHandlers[HandlerName::Button1]->addRecipient(mHandlers[HandlerName::Hal], HandlerName::Hal);
-
   mHandlers[HandlerName::Button2]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
-  mHandlers[HandlerName::Button2]->addRecipient(mHandlers[HandlerName::Hal], HandlerName::Hal);
-
   mHandlers[HandlerName::Radio]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
-  mHandlers[HandlerName::Radio]->addRecipient(mHandlers[HandlerName::Hal], HandlerName::Hal);
+
 
   mHandlers[HandlerName::Led]->addRecipient(mHandlers[HandlerName::Radio], HandlerName::Radio);
 

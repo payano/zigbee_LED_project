@@ -7,9 +7,11 @@
 
 #include "LedHandler.h"
 #include "Message.h"
+#include "HalHandler.h"
 
-LedHandler::LedHandler(HandlerName whoami):
-        mWhoami(whoami){
+LedHandler::LedHandler(HandlerName whoami, HalHandler* halHandler):
+        mWhoami(whoami),
+        mHalHandler(halHandler){
    // TODO Auto-generated constructor stub
 
 }
