@@ -27,15 +27,31 @@ void ButtonHandler::addMessage(MessagePkg::Message* message){
 
 void ButtonHandler::run() {
 
-  while(mQueue.size() > 0){
-       //talk to MRF24J to send radio messages.
-    MessagePkg::Message myMess = mQueue.front();
-    // TODO: this is wrong!
-       myMess.address = MessagePkg::Button1_Potentiometer;
-       mQueue.pop();
-    }
+   while(mQueue.size() > 0){
+     // Get element from queue
+     MessagePkg::Message message = mQueue.front();
+     switch(message.address){
+     case MessagePkg::Button1_Pressed:
+     case MessagePkg::Button2_Pressed:
 
-  mHalHandler->enableInterrupt(&mWhoami);
+       break;
+
+     case MessagePkg::Button1_Potentiometer:
+     case MessagePkg::Button2_Potentiometer:
+
+       break;
+
+
+     default:
+       break;
+     }
+     // Remove element from queue
+     mQueue.pop();
+   }
+
+
+   // do that here?
+   mHalHandler->enableInterrupt(&mWhoami);
 
 }
 

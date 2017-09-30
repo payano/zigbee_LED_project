@@ -55,7 +55,6 @@ void HalHandler::run() {
   //Check ADC:
   // 0 = Button 1 (potentiometer)
   // 1 = Button 2 (potentiometer)
-  // for the buttons the address is 0b10; aka 2;
   // 2 = Temperature sensor
 
   if(sInterrupted[HandlerName::Hal]){
@@ -136,7 +135,7 @@ void HalHandler::enableInterrupt(const HandlerName *handler){
   switch(*handler){
   case Hal:
     // this is to be handled some how.
-    HAL_ADC_Start_DMA(mHadc, mAdcBuffer,3);
+    HAL_ADC_Start_DMA(mHadc, mAdcBuffer,mAdcBufferLen);
     break;
   case Led:
     //led has PWM, no interrupts.
@@ -162,7 +161,7 @@ void HalHandler::disableInterrupt(const HandlerName *handler){
   switch(*handler){
   case Hal:
     // this is to be handled some how.
-    HAL_ADC_Start_DMA(mHadc, mAdcBuffer,3);
+    HAL_ADC_Start_DMA(mHadc, mAdcBuffer,mAdcBufferLen);
     break;
   case Led:
     //led has PWM, no interrupts.

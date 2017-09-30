@@ -45,6 +45,11 @@
 #include "RadioHandler.h"
 #include "ButtonHandler.h"
 #include "HalHandler.h"
+// not needed
+#include "Message.h"
+
+
+
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc;
@@ -105,6 +110,15 @@ int main(void)
        text     data      bss      dec      hex  filename
       17924      144     1380    19448     4bf8  zigbee_LED_project.elf
    */
+  /** 2017-09-30
+   * make --no-print-directory post-build
+    Generating binary and Printing size information:
+    arm-none-eabi-objcopy -O binary "zigbee_LED_project.elf" "zigbee_LED_project.bin"
+    arm-none-eabi-size "zigbee_LED_project.elf"
+       text     data      bss      dec      hex  filename
+      18764      144     1380    20288     4f40  zigbee_LED_project.elf
+   */
+
   IHandler* mHandlers[HandlerName::SIZE];
 
   HalHandler* Hal             = new HalHandler(HandlerName::Hal, &hadc, &htim3);
@@ -120,7 +134,7 @@ int main(void)
   mHandlers[HandlerName::Button1] = button1;
   mHandlers[HandlerName::Button2] = button2;
 
-  // Add adc buffer to Interrupthandler:
+  // Add ADC buffer to HalHandler:
   // TODO: not tested yet
   Hal->addAdcBuffer(ADC_BUF,ADC_BUF_LEN);
   // Make it possible for classes to talk to each other.
