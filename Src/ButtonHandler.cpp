@@ -29,22 +29,30 @@ void ButtonHandler::run() {
 
    while(mQueue.size() > 0){
      // Get element from queue
-   //  MessagePkg::Message message = mQueue.front();
-   //  switch(message.address){
-   //  case MessagePkg::Button1_Pressed:
-   //  case MessagePkg::Button2_Pressed:
-   //
-   //    break;
-   //
-   //  case MessagePkg::Button1_Potentiometer:
-   //  case MessagePkg::Button2_Potentiometer:
-   //
-   //    break;
-   //
-   //
-   //  default:
-   //    break;
-   //  }
+     MessagePkg::Message message = mQueue.front();
+     message.fromAddress = mWhoami;
+     message.toAddress = HandlerPkg::HandlerName::Led;
+
+     switch(message.type){
+     case MessagePkg::Pressed:
+       // the button does not know the state of the LED.
+       // or should it know the state?
+       message.value = 1;
+       break;
+
+     case MessagePkg::Potentiometer:
+       //convert from 4000.. ish to 0-255!
+       break;
+
+     default:
+       break;
+     }
+
+     // send message to LED if value >= 0
+     if(message.value >= 0){
+       mRecipients[HandlerName::Led]->addMessage(&message);
+     }
+
      // Remove element from queue
      mQueue.pop();
    }
