@@ -10,6 +10,7 @@
 #include "IHandler.h"
 #include <queue>
 
+namespace HandlerPkg{
 class LedHandler: public IHandler {
 private:
    IHandler* mRecipients[HandlerName::SIZE];
@@ -25,3 +26,4 @@ public:
    void addRecipient(IHandler* recipient, HandlerName recipientName) override;
 };
 
+}

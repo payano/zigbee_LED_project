@@ -9,6 +9,8 @@
 #include "Message.h"
 #include "HalHandler.h"
 
+namespace HandlerPkg{
+
 LedHandler::LedHandler(HandlerName whoami, HalHandler* halHandler):
         mWhoami(whoami),
         mHalHandler(halHandler){
@@ -27,7 +29,7 @@ void LedHandler::run() {
 	while(mQueue.size() > 0){
 	  // Get element from queue
 	  MessagePkg::Message message = mQueue.front();
-	  switch(message.address){
+	  switch(message.type){
 	  case MessagePkg::Led_Panel_Value:
 	    if(message.write){
 	      //radio and button can write.
@@ -75,4 +77,5 @@ void LedHandler::run() {
 
 void LedHandler::addRecipient(IHandler* recipient, HandlerName recipientName){
    mRecipients[recipientName] = recipient;
+}
 }

@@ -36,6 +36,7 @@
 #include "stm32f0xx_it.h"
 
 #include "HalHandler.h"
+#include "Enums.h"
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
@@ -103,6 +104,7 @@ void EXTI0_1_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI0_1_IRQn 0 */
   // button 1
+  using namespace HandlerPkg;
   HalHandler::setInterrupted(HandlerName::Button1);
   HAL_NVIC_DisableIRQ(EXTI0_1_IRQn);
 
@@ -121,6 +123,7 @@ void EXTI2_3_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI2_3_IRQn 0 */
   // button 2
+  using namespace HandlerPkg;
   HalHandler::setInterrupted(HandlerName::Button2);
 	HAL_NVIC_DisableIRQ(EXTI2_3_IRQn);
 
@@ -139,6 +142,7 @@ void EXTI4_15_IRQHandler(void)
 
   /* USER CODE BEGIN EXTI4_15_IRQn 0 */
   // MRF24J
+  using namespace HandlerPkg;
   HalHandler::setInterrupted(HandlerName::Radio);
 	HAL_NVIC_DisableIRQ(EXTI4_15_IRQn);
 

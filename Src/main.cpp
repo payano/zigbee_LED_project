@@ -118,6 +118,7 @@ int main(void)
        text     data      bss      dec      hex  filename
       18764      144     1380    20288     4f40  zigbee_LED_project.elf
    */
+  using namespace HandlerPkg;
 
   IHandler* mHandlers[HandlerName::SIZE];
 
@@ -181,6 +182,7 @@ int main(void)
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
   if(hadc->Instance == ADC1){
+    using namespace HandlerPkg;
     HalHandler::setInterrupted(HandlerName::Hal);
   }
 }

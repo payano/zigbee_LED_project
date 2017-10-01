@@ -10,6 +10,8 @@
 #include "stm32f0xx_hal.h"
 #include "stm32f0xx_hal_adc.h"
 #include <memory>
+
+namespace HandlerPkg{
 constexpr int INTERRUPT_LENGTH = 3;
 constexpr int PWM_CHANNELS = 4;
 
@@ -55,3 +57,4 @@ public:
   void addRecipient(IHandler* recipient, HandlerName recipientName) override;
 
 };
+}

@@ -10,13 +10,15 @@
 #include "IHandler.h"
 #include <queue>
 
-class ButtonHandler: public IHandler {
+namespace HandlerPkg{
+
+class ButtonHandler: public HandlerPkg::IHandler {
 private:
-   IHandler* mRecipients[HandlerName::SIZE];
-   HandlerName mWhoami;
-   HalHandler* mHalHandler;
-   std::queue<MessagePkg::Message> mQueue;
-   int mPotentiometerValue;
+  IHandler* mRecipients[HandlerName::SIZE];
+  HandlerName mWhoami;
+  HalHandler* mHalHandler;
+  std::queue<MessagePkg::Message> mQueue;
+  int mPotentiometerValue;
 
 public:
    ButtonHandler(HandlerName whoami, HalHandler* halHandler);
@@ -25,3 +27,4 @@ public:
    void run() override;
    void addRecipient(IHandler* recipient, HandlerName recipientName) override;
 };
+}

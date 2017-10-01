@@ -9,7 +9,7 @@
 #include "Message.h"
 #include "stm32f0xx_hal.h"
 
-
+namespace HandlerPkg{
 bool HalHandler::sInterrupted[HandlerName::SIZE] = {false};
 
 HalHandler::HalHandler(HandlerName whoami, ADC_HandleTypeDef *hadc, TIM_HandleTypeDef *timer):
@@ -51,6 +51,8 @@ void HalHandler::addMessage(MessagePkg::Message* message){
 
 void HalHandler::run() {
 
+  using namespace HandlerPkg;
+  using namespace MessagePkg;
   // TODO: untested:
   //Check ADC:
   // 0 = Button 1 (potentiometer)
@@ -61,24 +63,29 @@ void HalHandler::run() {
     {
       // generate message
       MessagePkg::Message message;
-      message.address = MessagePkg::Button1_Potentiometer;
+      message.toAddress = HandlerName::Button1;
+      message.fromAddress = HandlerName::Hal;
+      message.type = Register::Potentiometer;
       message.value = mAdcBuffer[0];
       mRecipients[HandlerName::Button1]->addMessage(&message);
     }
     {
       // generate message
       MessagePkg::Message message;
-      message.address = MessagePkg::Button2_Potentiometer;
+      message.toAddress = HandlerName::Button2;
+      message.fromAddress = HandlerName::Hal;
+      message.type = Register::Potentiometer;
       message.value = mAdcBuffer[1];
       mRecipients[HandlerName::Button2]->addMessage(&message);
     }
     {
-      // generate message to temp sensor
-      // temp sensor has address 0x04;
+      // generate message
       MessagePkg::Message message;
-      message.address = MessagePkg::Temperature_Value;
+      message.toAddress = HandlerName::Hal;
+      message.fromAddress = HandlerName::Hal;
+      message.type = Register::Temperature_Value;
       message.value = mAdcBuffer[2];
-      //mRecipients[HandlerName::Button1]->addMessage(&to_button1);
+      //mRecipients[HandlerName::Hal]->addMessage(&message);
     }
   }
 
@@ -86,9 +93,10 @@ void HalHandler::run() {
   if(sInterrupted[HandlerName::Button1]){
     // generate message
     MessagePkg::Message message;
-    message.address = MessagePkg::Button1_Pressed;
+    message.toAddress = HandlerName::Button1;
+    message.fromAddress = HandlerName::Hal;
+    message.type = Register::Pressed;
     message.value = 1;
-    //to_button1.address
     mRecipients[HandlerName::Button1]->addMessage(&message);
   }
 
@@ -96,9 +104,10 @@ void HalHandler::run() {
   if(sInterrupted[HandlerName::Button2]){
     // generate message
     MessagePkg::Message message;
-    message.address = MessagePkg::Button2_Pressed;
+    message.toAddress = HandlerName::Button2;
+    message.fromAddress = HandlerName::Hal;
+    message.type = Register::Pressed;
     message.value = 1;
-    //to_button1.address
     mRecipients[HandlerName::Button2]->addMessage(&message);
   }
 
@@ -106,9 +115,10 @@ void HalHandler::run() {
   if(sInterrupted[HandlerName::Radio]){
     // generate message
     MessagePkg::Message message;
-    message.address = MessagePkg::Radio_Interrupt;
+    message.toAddress = HandlerName::Radio;
+    message.fromAddress = HandlerName::Hal;
+    message.type = Register::Interrupt;
     message.value = 1;
-    //to_button1.address
     mRecipients[HandlerName::Radio]->addMessage(&message);
   }
 
@@ -194,4 +204,5 @@ void HalHandler::getPWM(const Channel channel, unsigned int* value){
 }
 void HalHandler::addRecipient(IHandler* recipient, HandlerName recipientName){
   mRecipients[recipientName] = recipient;
+}
 }

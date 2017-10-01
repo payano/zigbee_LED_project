@@ -9,6 +9,7 @@
 #include "Message.h"
 #include "HalHandler.h"
 
+namespace HandlerPkg {
 RadioHandler::RadioHandler(HandlerName whoami, HalHandler* halHandler):
                mWhoami(whoami),
                mHalHandler(halHandler){
@@ -35,4 +36,5 @@ void RadioHandler::run() {
 void RadioHandler::addRecipient(IHandler* recipient, HandlerName recipientName){
    mRecipients[recipientName] = recipient;
 
+}
 }

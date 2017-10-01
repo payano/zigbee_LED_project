@@ -10,6 +10,8 @@
 #include "IHandler.h"
 #include <queue>
 
+namespace HandlerPkg{
+
 class RadioHandler: public IHandler {
 private:
    IHandler* mRecipients[HandlerName::SIZE];
@@ -23,3 +25,5 @@ public:
    void run() override;
    void addRecipient(IHandler* recipient, HandlerName recipientName) override;
 };
+
+}
