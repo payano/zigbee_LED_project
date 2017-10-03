@@ -10,15 +10,18 @@
 #include "HalHandler.h"
 namespace HandlerPkg{
 ButtonHandler::ButtonHandler(HandlerName whoami, HalHandler* halHandler):
+                      mQueue(new MessagePkg::Message[5]),
                       mWhoami(whoami),
                       mHalHandler(halHandler),
-                      mPotentiometerValue(0){
+                      mPotentiometerValue(0)
+                      {
    // TODO Auto-generated constructor stub
 
 }
 
 ButtonHandler::~ButtonHandler() {
    // TODO Auto-generated destructor stub
+  delete mQueue;
 }
 
 void ButtonHandler::addMessage(MessagePkg::Message* message){
@@ -26,7 +29,7 @@ void ButtonHandler::addMessage(MessagePkg::Message* message){
 }
 
 void ButtonHandler::run() {
-
+/*
    while(mQueue.size() > 0){
      // Get element from queue
      MessagePkg::Message message = mQueue.front();
@@ -61,6 +64,7 @@ void ButtonHandler::run() {
    // do that here?
    mHalHandler->enableInterrupt(&mWhoami);
 
+*/
 }
 
 void ButtonHandler::addRecipient(IHandler* recipient, HandlerName recipientName){

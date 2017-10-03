@@ -15,9 +15,9 @@ namespace HandlerPkg{
 class ButtonHandler: public HandlerPkg::IHandler {
 private:
   IHandler* mRecipients[HandlerName::SIZE];
+  MessagePkg::Message *mQueue;
   HandlerName mWhoami;
   HalHandler* mHalHandler;
-  std::queue<MessagePkg::Message> mQueue;
   int mPotentiometerValue;
 
 public:

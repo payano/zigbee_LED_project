@@ -11,6 +11,7 @@
 
 namespace HandlerPkg {
 RadioHandler::RadioHandler(HandlerName whoami, HalHandler* halHandler):
+               mQueue(new MessagePkg::Message[10]),
                mWhoami(whoami),
                mHalHandler(halHandler){
    // TODO Auto-generated constructor stub
@@ -19,17 +20,18 @@ RadioHandler::RadioHandler(HandlerName whoami, HalHandler* halHandler):
 
 RadioHandler::~RadioHandler() {
    // TODO Auto-generated destructor stub
+  delete mQueue;
 }
 
 void RadioHandler::addMessage(MessagePkg::Message* message){
-	mQueue.push(*message);
+	//mQueue.push(*message);
 }
 
 void RadioHandler::run() {
-	while(mQueue.size() > 0){
-		//talk to MRF24J to send radio messages.
-
-	}
+//	while(mQueue.size() > 0){
+//		//talk to MRF24J to send radio messages.
+//
+//	}
 
 }
 

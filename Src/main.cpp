@@ -79,6 +79,7 @@ int main(void)
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
+
   /* Configure the system clock */
   SystemClock_Config();
 
@@ -123,10 +124,10 @@ int main(void)
   IHandler* mHandlers[HandlerName::SIZE];
 
   HalHandler* Hal             = new HalHandler(HandlerName::Hal, &hadc, &htim3);
-  LedHandler* Led             = new LedHandler(HandlerName::Led, Hal);
-  RadioHandler* radio         = new RadioHandler(HandlerName::Radio, Hal);
   ButtonHandler* button1      = new ButtonHandler(HandlerName::Button1, Hal);
   ButtonHandler* button2      = new ButtonHandler(HandlerName::Button2, Hal);
+  LedHandler* Led             = new LedHandler(HandlerName::Led, Hal);
+  RadioHandler* radio         = new RadioHandler(HandlerName::Radio, Hal);
 
   //Right order is important.
   mHandlers[HandlerName::Hal] = Hal;
@@ -134,6 +135,7 @@ int main(void)
   mHandlers[HandlerName::Radio] = radio;
   mHandlers[HandlerName::Button1] = button1;
   mHandlers[HandlerName::Button2] = button2;
+
 
   // Add ADC buffer to HalHandler:
   // TODO: not tested yet
@@ -166,7 +168,6 @@ int main(void)
   // Start ADC:
   // ADC will go to a callback method: void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
   HAL_ADC_Start_DMA(&hadc, (uint32_t*)ADC_BUF,2);
-
 
   while (1)
   {

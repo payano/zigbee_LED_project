@@ -15,7 +15,8 @@ namespace HandlerPkg{
 class RadioHandler: public IHandler {
 private:
    IHandler* mRecipients[HandlerName::SIZE];
-   std::queue<MessagePkg::Message> mQueue;
+   //std::queue<MessagePkg::Message> mQueue;
+   MessagePkg::Message *mQueue;
    HandlerName mWhoami;
    HalHandler* mHalHandler;
 public:
