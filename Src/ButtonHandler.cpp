@@ -13,7 +13,8 @@ ButtonHandler::ButtonHandler(HandlerName whoami, HalHandler* halHandler):
                       mQueue(new MessagePkg::MessageBox(5)),
                       mWhoami(whoami),
                       mHalHandler(halHandler),
-                      mPotentiometerValue(0)
+                      mPotentiometerValue(0),
+                      mButtonStatus(false)
                       {
    // TODO Auto-generated constructor stub
 

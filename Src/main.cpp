@@ -39,17 +39,11 @@
 #include "main.h"
 #include "stm32f0xx_hal.h"
 
-#include <vector>
 #include "IHandler.h"
 #include "LedHandler.h"
 #include "RadioHandler.h"
 #include "ButtonHandler.h"
 #include "HalHandler.h"
-// not needed
-#include "Message.h"
-
-
-
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc;
@@ -126,6 +120,13 @@ int main(void)
         text     data      bss      dec      hex  filename
        13384      128     2244    15756     3d8c  zigbee_LED_project.elf
 
+      2017-10-05
+      make --no-print-directory post-build
+      Generating binary and Printing size information:
+      arm-none-eabi-objcopy -O binary "zigbee_LED_project.elf" "zigbee_LED_project.bin"
+      arm-none-eabi-size "zigbee_LED_project.elf"
+         text     data      bss      dec      hex  filename
+        14512      128     2244    16884     41f4  zigbee_LED_project.elf
    */
   using namespace HandlerPkg;
 

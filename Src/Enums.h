@@ -21,4 +21,12 @@ enum HandlerName {
   Button2,
   SIZE
 };
+// assuming that everything runs on the same channel.
+enum Channel {
+  RGB_R = 0,
+  RGB_G,
+  RGB_B,
+  PANEL,
+  CHANNEL_SIZE
+};
 }

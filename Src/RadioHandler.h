@@ -8,7 +8,6 @@
 #pragma once
 
 #include "IHandler.h"
-#include <queue>
 
 namespace HandlerPkg{
 

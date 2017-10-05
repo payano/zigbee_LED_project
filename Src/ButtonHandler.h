@@ -17,6 +17,7 @@ private:
   HandlerName mWhoami;
   HalHandler* mHalHandler;
   int mPotentiometerValue;
+  bool mButtonStatus;
   IHandler* mRecipients[HandlerName::SIZE];
 
 public:

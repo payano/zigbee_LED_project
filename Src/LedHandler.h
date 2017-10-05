@@ -8,22 +8,24 @@
 #pragma once
 
 #include "IHandler.h"
-#include <queue>
 
 namespace HandlerPkg{
+
 class LedHandler: public IHandler {
 private:
-   MessagePkg::MessageBox *mQueue;
-   HandlerName mWhoami;
-   HalHandler* mHalHandler;
-   IHandler* mRecipients[HandlerName::SIZE];
+  MessagePkg::MessageBox *mQueue;
+  HandlerName mWhoami;
+  HalHandler* mHalHandler;
+  uint8_t mLedValue[HandlerPkg::Channel::CHANNEL_SIZE];
+  //RGB_R, RGB_G, RGB_B, LED_PANEL
+  IHandler* mRecipients[HandlerName::SIZE];
 
 public:
-   LedHandler(HandlerName whoami, HalHandler* halHandler);
-   virtual ~LedHandler();
-   void addMessage(MessagePkg::Message* message) override;
-   void run() override;
-   void addRecipient(IHandler* recipient, HandlerName recipientName) override;
+  LedHandler(HandlerName whoami, HalHandler* halHandler);
+  virtual ~LedHandler();
+  void addMessage(MessagePkg::Message* message) override;
+  void run() override;
+  void addRecipient(IHandler* recipient, HandlerName recipientName) override;
 };
 
 }

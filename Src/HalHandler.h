@@ -15,13 +15,7 @@ namespace HandlerPkg{
 constexpr int INTERRUPT_LENGTH = 3;
 constexpr int PWM_CHANNELS = 4;
 
-// assuming that everything runs on the same channel.
-enum Channel {
-  RGB_R = 0,
-  RGB_G,
-  RGB_B,
-  PANEL
-};
+
 
 class HalHandler: public IHandler {
 private:

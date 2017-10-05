@@ -14,8 +14,10 @@ namespace HandlerPkg{
 LedHandler::LedHandler(HandlerName whoami, HalHandler* halHandler):
         mQueue(new MessagePkg::MessageBox(10)),
         mWhoami(whoami),
-        mHalHandler(halHandler){
+        mHalHandler(halHandler)
+        {
    // TODO Auto-generated constructor stub
+  mLedValue[HandlerPkg::Channel::CHANNEL_SIZE] = {0};
 
 }
 

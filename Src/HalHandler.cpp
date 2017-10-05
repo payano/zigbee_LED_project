@@ -7,7 +7,7 @@
 
 #include "HalHandler.h"
 #include "Message.h"
-#include "stm32f0xx_hal.h"
+//#include "stm32f0xx_hal.h"
 
 namespace HandlerPkg{
 bool HalHandler::sInterrupted[HandlerName::SIZE] = {false};
