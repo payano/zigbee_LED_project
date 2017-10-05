@@ -9,7 +9,8 @@
 #include <memory>
 //forward declaring message:
 namespace MessagePkg{
-  class Message;
+  struct Message;
+  class MessageBox;
 }
 
 namespace HandlerPkg{

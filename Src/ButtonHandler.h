@@ -8,17 +8,16 @@
 #pragma once
 
 #include "IHandler.h"
-#include <queue>
 
 namespace HandlerPkg{
 
 class ButtonHandler: public HandlerPkg::IHandler {
 private:
-  IHandler* mRecipients[HandlerName::SIZE];
-  MessagePkg::Message *mQueue;
+  MessagePkg::MessageBox *mQueue;
   HandlerName mWhoami;
   HalHandler* mHalHandler;
   int mPotentiometerValue;
+  IHandler* mRecipients[HandlerName::SIZE];
 
 public:
    ButtonHandler(HandlerName whoami, HalHandler* halHandler);

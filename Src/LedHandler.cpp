@@ -12,7 +12,7 @@
 namespace HandlerPkg{
 
 LedHandler::LedHandler(HandlerName whoami, HalHandler* halHandler):
-        mQueue(new MessagePkg::Message[10]),
+        mQueue(new MessagePkg::MessageBox(10)),
         mWhoami(whoami),
         mHalHandler(halHandler){
    // TODO Auto-generated constructor stub
@@ -24,7 +24,7 @@ LedHandler::~LedHandler() {
   delete mQueue;
 }
 void LedHandler::addMessage(MessagePkg::Message* message){
-	//mQueue.push(*message);
+  mQueue->putMessage(message);
 }
 
 void LedHandler::run() {

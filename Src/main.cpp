@@ -118,6 +118,14 @@ int main(void)
     arm-none-eabi-size "zigbee_LED_project.elf"
        text     data      bss      dec      hex  filename
       18764      144     1380    20288     4f40  zigbee_LED_project.elf
+
+      make --no-print-directory post-build
+     Generating binary and Printing size information:
+     arm-none-eabi-objcopy -O binary "zigbee_LED_project.elf" "zigbee_LED_project.bin"
+     arm-none-eabi-size "zigbee_LED_project.elf"
+        text     data      bss      dec      hex  filename
+       13384      128     2244    15756     3d8c  zigbee_LED_project.elf
+
    */
   using namespace HandlerPkg;
 
@@ -135,7 +143,6 @@ int main(void)
   mHandlers[HandlerName::Radio] = radio;
   mHandlers[HandlerName::Button1] = button1;
   mHandlers[HandlerName::Button2] = button2;
-
 
   // Add ADC buffer to HalHandler:
   // TODO: not tested yet

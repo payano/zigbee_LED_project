@@ -10,7 +10,7 @@
 #include "HalHandler.h"
 namespace HandlerPkg{
 ButtonHandler::ButtonHandler(HandlerName whoami, HalHandler* halHandler):
-                      mQueue(new MessagePkg::Message[5]),
+                      mQueue(new MessagePkg::MessageBox(5)),
                       mWhoami(whoami),
                       mHalHandler(halHandler),
                       mPotentiometerValue(0)
@@ -25,7 +25,7 @@ ButtonHandler::~ButtonHandler() {
 }
 
 void ButtonHandler::addMessage(MessagePkg::Message* message){
-	//mQueue.push(*message);
+  mQueue->putMessage(message);
 }
 
 void ButtonHandler::run() {

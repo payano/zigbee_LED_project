@@ -21,4 +21,22 @@ struct Message {
   unsigned int value;
   bool write = false;
 };
+
+class MessageBox{
+private:
+  Message *mMessages;
+  int mTotalSize;
+  int mUsed;
+
+public:
+  MessageBox(int size);
+  virtual ~MessageBox();
+  void putMessage(Message* message);
+  void getMessage(Message* message);
+  bool empty();
+  bool full();
+  int maxSize();
+  int usedSize();
+
+};
 }

@@ -14,11 +14,10 @@ namespace HandlerPkg{
 
 class RadioHandler: public IHandler {
 private:
-   IHandler* mRecipients[HandlerName::SIZE];
-   //std::queue<MessagePkg::Message> mQueue;
-   MessagePkg::Message *mQueue;
+   MessagePkg::MessageBox *mQueue;
    HandlerName mWhoami;
    HalHandler* mHalHandler;
+   IHandler* mRecipients[HandlerName::SIZE];
 public:
    RadioHandler(HandlerName whoami, HalHandler* halHandler);
    virtual ~RadioHandler();

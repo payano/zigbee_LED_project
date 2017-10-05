@@ -13,11 +13,10 @@
 namespace HandlerPkg{
 class LedHandler: public IHandler {
 private:
-   IHandler* mRecipients[HandlerName::SIZE];
-   //std::queue<MessagePkg::Message> mQueue;
-   MessagePkg::Message *mQueue;
+   MessagePkg::MessageBox *mQueue;
    HandlerName mWhoami;
    HalHandler* mHalHandler;
+   IHandler* mRecipients[HandlerName::SIZE];
 
 public:
    LedHandler(HandlerName whoami, HalHandler* halHandler);
