@@ -15,7 +15,7 @@ MessageBox::~MessageBox(){
 void MessageBox::putMessage(Message* message){
   // if there is some place left, put message last in queue.
   // otherwise discard message
-  if(mUsed > mTotalSize){
+  if(mUsed < mTotalSize){
     // Copy the message
     mMessages[mUsed] = *message;
     ++mUsed;

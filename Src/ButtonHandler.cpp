@@ -29,6 +29,13 @@ void ButtonHandler::addMessage(MessagePkg::Message* message){
 }
 
 void ButtonHandler::run() {
+  MessagePkg::Message message;
+  message.fromAddress = mWhoami;
+  message.toAddress = HandlerPkg::HandlerName::Led;
+  message.type = MessagePkg::Register::Pressed;
+  message.value = 0x01;
+  message.write = false;
+  mRecipients[HandlerName::Led]->addMessage(&message);
 /*
    while(mQueue.size() > 0){
      // Get element from queue

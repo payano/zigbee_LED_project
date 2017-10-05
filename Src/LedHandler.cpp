@@ -28,6 +28,11 @@ void LedHandler::addMessage(MessagePkg::Message* message){
 }
 
 void LedHandler::run() {
+  if(!mQueue->empty()){
+    MessagePkg::Message message;
+    mQueue->getMessage(&message);
+
+  }
 //	while(mQueue.size() > 0){
 //	  // Get element from queue
 //	  MessagePkg::Message message = mQueue.front();
