@@ -29,17 +29,12 @@ void ButtonHandler::addMessage(MessagePkg::Message* message){
 }
 
 void ButtonHandler::run() {
-  MessagePkg::Message message;
-  message.fromAddress = mWhoami;
-  message.toAddress = HandlerPkg::HandlerName::Led;
-  message.type = MessagePkg::Register::Pressed;
-  message.value = 0x01;
-  message.write = false;
-  mRecipients[HandlerName::Led]->addMessage(&message);
-/*
-   while(mQueue.size() > 0){
+
+   while(!mQueue->empty()){
      // Get element from queue
-     MessagePkg::Message message = mQueue.front();
+     MessagePkg::Message message;
+     mQueue->getMessage(&message);
+
      message.fromAddress = mWhoami;
      message.toAddress = HandlerPkg::HandlerName::Led;
 
@@ -62,16 +57,11 @@ void ButtonHandler::run() {
      if(message.value >= 0){
        mRecipients[HandlerName::Led]->addMessage(&message);
      }
-
-     // Remove element from queue
-     mQueue.pop();
    }
-
 
    // do that here?
    mHalHandler->enableInterrupt(&mWhoami);
 
-*/
 }
 
 void ButtonHandler::addRecipient(IHandler* recipient, HandlerName recipientName){

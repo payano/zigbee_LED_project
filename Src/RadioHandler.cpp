@@ -28,10 +28,15 @@ void RadioHandler::addMessage(MessagePkg::Message* message){
 }
 
 void RadioHandler::run() {
-//	while(mQueue.size() > 0){
-//		//talk to MRF24J to send radio messages.
-//
-//	}
+	while(!mQueue->empty()){
+		//talk to MRF24J to send radio messages.
+     // Get element from queue
+     MessagePkg::Message message;
+     mQueue->getMessage(&message);
+
+     // Do something with the message
+
+	}
 
 }
 
