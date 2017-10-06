@@ -35,7 +35,6 @@ void ButtonHandler::run() {
      // Get element from queue
      MessagePkg::Message message;
      mQueue->getMessage(&message);
-
      message.fromAddress = mWhoami;
      message.toAddress = HandlerPkg::HandlerName::Led;
 
@@ -43,14 +42,20 @@ void ButtonHandler::run() {
      case MessagePkg::Pressed:
        // the button does not know the state of the LED.
        // or should it know the state?
-       message.value = 1;
+       mButtonStatus = !mButtonStatus;
+       message.value = -1;
        break;
 
      case MessagePkg::Potentiometer:
-       //convert from 4000.. ish to 0-255!
+       if(!mButtonStatus){
+         // if button is "off", don't send potentiometer information
+         message.value = -1;
+       }
        break;
 
      default:
+       // this is not meant for LED.
+       message.value = -1;
        break;
      }
 

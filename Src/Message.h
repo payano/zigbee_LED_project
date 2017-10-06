@@ -18,7 +18,7 @@ struct Message {
   HandlerPkg::HandlerName fromAddress;
   HandlerPkg::HandlerName toAddress;
   Register type;
-  unsigned int value;
+  int value;
   bool write = false;
 };
 

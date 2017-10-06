@@ -45,9 +45,9 @@ public:
   virtual bool getInterrupted(const HandlerName *handler);
   virtual void enableInterrupt(const HandlerName *handler);
   virtual void disableInterrupt(const HandlerName *handler);
-  virtual void setPWM(const Channel channel, unsigned int* value);
-  virtual void getPWM(const Channel channel, unsigned int* value);
-
+  virtual void setPWM(const Channel channel, int* value);
+  virtual void getPWM(const Channel channel, int* value);
+  virtual int potentiometerToButtonValue(const uint32_t* value);
   void addRecipient(IHandler* recipient, HandlerName recipientName) override;
 
 };

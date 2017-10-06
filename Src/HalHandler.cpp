@@ -7,6 +7,7 @@
 
 #include "HalHandler.h"
 #include "Message.h"
+
 //#include "stm32f0xx_hal.h"
 
 namespace HandlerPkg{
@@ -62,20 +63,23 @@ void HalHandler::run() {
   if(sInterrupted[HandlerName::Hal]){
     {
       // generate message
+
+      auto kalle = mAdcBuffer[0];
       MessagePkg::Message message;
       message.toAddress = HandlerName::Button1;
       message.fromAddress = HandlerName::Hal;
       message.type = Register::Potentiometer;
-      message.value = mAdcBuffer[0];
+      message.value = potentiometerToButtonValue(&mAdcBuffer[0]);
       mRecipients[HandlerName::Button1]->addMessage(&message);
     }
     {
       // generate message
+
       MessagePkg::Message message;
       message.toAddress = HandlerName::Button2;
       message.fromAddress = HandlerName::Hal;
       message.type = Register::Potentiometer;
-      message.value = mAdcBuffer[1];
+      message.value = potentiometerToButtonValue(&mAdcBuffer[1]);
       mRecipients[HandlerName::Button2]->addMessage(&message);
     }
     {
@@ -126,6 +130,9 @@ void HalHandler::run() {
   for(int i = 0; i < HandlerName::SIZE;++i){
     sInterrupted[i] = false;
   }
+
+  // Enable ADC
+  enableInterrupt(&mWhoami);
 }
 
 void HalHandler::setInterrupted(HandlerName handler){
@@ -193,14 +200,29 @@ void HalHandler::disableInterrupt(const HandlerName *handler){
   }
 }
 
-void HalHandler::setPWM(const Channel channel, unsigned int *value){
+void HalHandler::setPWM(const Channel channel, int *value){
+  // Dont go over the period time!
+  if(*value > 254){*value = 254;}
   pwmConfig[channel]->Pulse = *value;
   HAL_TIM_PWM_ConfigChannel(mTimer, pwmConfig[channel], PWM_CHANNEL[channel]);
 
 }
 
-void HalHandler::getPWM(const Channel channel, unsigned int* value){
+void HalHandler::getPWM(const Channel channel, int* value){
   *value = pwmConfig[channel]->Pulse;
+}
+
+int HalHandler::potentiometerToButtonValue(const uint32_t* value){
+  // 255/4034 = ..
+  constexpr float convertFactor = 0.063212692117005453644025780862667327714427367377293009419;
+  // measure value. think it is between 0-4000
+  // this will do the equation:  255
+  //                            ---- =  0.063212692117005453644025780862667327714427367377293009419
+  //                             4034
+  int returnval = (int)(*value);
+  returnval *= convertFactor;
+  return returnval;
+
 }
 void HalHandler::addRecipient(IHandler* recipient, HandlerName recipientName){
   mRecipients[recipientName] = recipient;
