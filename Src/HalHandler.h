@@ -21,15 +21,16 @@ class HalHandler: public IHandler {
 private:
   const IRQn_Type button[2] = {EXTI0_1_IRQn, EXTI2_3_IRQn};
   const IRQn_Type radio = EXTI4_15_IRQn;
-  const uint32_t PWM_CHANNEL[4] = {TIM_CHANNEL_1,TIM_CHANNEL_2,TIM_CHANNEL_3,TIM_CHANNEL_4};
+  const uint32_t PWM_CHANNEL[PWM_CHANNELS] = {TIM_CHANNEL_1,TIM_CHANNEL_2,TIM_CHANNEL_3,TIM_CHANNEL_4};
 
-  IHandler* mRecipients[HandlerName::SIZE];
-  static bool sInterrupted[HandlerName::SIZE]; //static
   uint32_t* mAdcBuffer;
   uint32_t mAdcBufferLen;
   HandlerName mWhoami;
   ADC_HandleTypeDef *mHadc;
   TIM_HandleTypeDef *mTimer;
+  uint16_t pwmPulseValues[PWM_CHANNELS];
+  IHandler* mRecipients[HandlerName::SIZE];
+  static bool sInterrupted[HandlerName::SIZE]; //static
   TIM_OC_InitTypeDef* pwmConfig[PWM_CHANNELS];
 
 public:

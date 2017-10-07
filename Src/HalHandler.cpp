@@ -21,6 +21,8 @@ HalHandler::HalHandler(HandlerName whoami, ADC_HandleTypeDef *hadc, TIM_HandleTy
       mTimer(timer){
 
   for(int i = 0; i < PWM_CHANNELS; ++i){
+    pwmPulseValues[i] = 0; //set PWM pulse to zero, it is off by default.
+
     pwmConfig[i] = new TIM_OC_InitTypeDef;
 
     // initiation of PWM configuration
@@ -64,7 +66,6 @@ void HalHandler::run() {
     {
       // generate message
 
-      auto kalle = mAdcBuffer[0];
       MessagePkg::Message message;
       message.toAddress = HandlerName::Button1;
       message.fromAddress = HandlerName::Hal;
@@ -204,7 +205,9 @@ void HalHandler::setPWM(const Channel channel, int *value){
   // Dont go over the period time!
   if(*value > 254){*value = 254;}
   pwmConfig[channel]->Pulse = *value;
+  HAL_TIM_PWM_Stop_IT(mTimer, PWM_CHANNEL[channel]);
   HAL_TIM_PWM_ConfigChannel(mTimer, pwmConfig[channel], PWM_CHANNEL[channel]);
+  HAL_TIM_PWM_Start_IT(mTimer, PWM_CHANNEL[channel]);
 
 }
 

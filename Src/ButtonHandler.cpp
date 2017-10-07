@@ -43,25 +43,30 @@ void ButtonHandler::run() {
        // the button does not know the state of the LED.
        // or should it know the state?
        mButtonStatus = !mButtonStatus;
-       message.value = -1;
+       if(mButtonStatus){
+         message.value = 1;
+       }else{
+         message.value = 0;
+       }
+       mRecipients[HandlerName::Led]->addMessage(&message);
        break;
 
      case MessagePkg::Potentiometer:
-       if(!mButtonStatus){
+     {
+       int diff = mPotentiometerValue - message.value;
+       if(diff < 0){diff *= -1;}
+
+       if(mButtonStatus && diff > 5){
          // if button is "off", don't send potentiometer information
-         message.value = -1;
+         mRecipients[HandlerName::Led]->addMessage(&message);
+         mPotentiometerValue = message.value;
        }
+     }
        break;
 
      default:
        // this is not meant for LED.
-       message.value = -1;
        break;
-     }
-
-     // send message to LED if value >= 0
-     if(message.value >= 0){
-       mRecipients[HandlerName::Led]->addMessage(&message);
      }
    }
 

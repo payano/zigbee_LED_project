@@ -16,7 +16,7 @@ private:
   MessagePkg::MessageBox *mQueue;
   HandlerName mWhoami;
   HalHandler* mHalHandler;
-  uint8_t mLedValue[HandlerPkg::Channel::CHANNEL_SIZE];
+  int mLedValue[HandlerPkg::Channel::CHANNEL_SIZE];
   //RGB_R, RGB_G, RGB_B, LED_PANEL
   IHandler* mRecipients[HandlerName::SIZE];
 
