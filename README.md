@@ -10,3 +10,7 @@ BC547
 IRF3205
 LED-panel (aliexpress)
 RGBW-led strips (aliexpress)
+
+
+THIS TOO: https://electronics.stackexchange.com/questions/132000/stm32-series-microcontroller-calculations-of-timer-variables
+
