@@ -8,6 +8,7 @@
 #include "RadioHandler.h"
 #include "Message.h"
 #include "HalHandler.h"
+#include "Mrf24j.h"
 
 namespace HandlerPkg {
 RadioHandler::RadioHandler(HandlerName whoami, HalHandler* halHandler):
