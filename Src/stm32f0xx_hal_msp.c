@@ -104,7 +104,6 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     if (HAL_DMA_Init(&hdma_adc) != HAL_OK)
     {
       while(1){;}
-
       //_Error_Handler(__FILE__, __LINE__);
     }
 
