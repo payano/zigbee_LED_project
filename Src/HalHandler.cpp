@@ -204,6 +204,7 @@ void HalHandler::disableInterrupt(const HandlerName *handler){
 void HalHandler::setPWM(const Channel channel, int *value){
   // Dont go over the period time!
   if(*value > 254){*value = 254;}
+  else if(*value < 1){*value = 0;}
   pwmConfig[channel]->Pulse = *value;
   HAL_TIM_PWM_Stop_IT(mTimer, PWM_CHANNEL[channel]);
   HAL_TIM_PWM_ConfigChannel(mTimer, pwmConfig[channel], PWM_CHANNEL[channel]);
