@@ -1,4 +1,4 @@
-update=Wed 18 Oct 2017 05:15:54 PM CEST
+update=Wed 25 Oct 2017 02:04:31 PM CEST
 version=1
 last_client=kicad
 [pcbnew]
@@ -27,7 +27,7 @@ NetIExt=net
 version=1
 [eeschema]
 version=1
-LibDir=libraries/stm32nucleo.pretty;libraries/IRF3205/library.pretty;libraries/potHoles.pretty;libraries/buttonSwitch.pretty
+LibDir=libraries/stm32nucleo.pretty;libraries/IRF3205/library.pretty;libraries/potHoles.pretty;libraries/buttonSwitch.pretty;libraries/DrillHole.pretty
 [eeschema/libraries]
 LibName1=power
 LibName2=device
@@ -65,3 +65,4 @@ LibName33=libraries/ds-001
 LibName34=switches
 LibName35=libraries/PotHoles
 LibName36=libraries/buttonswitch
+LibName37=libraries/drill_hole

@@ -85,6 +85,10 @@
 #define LED_PANEL_GPIO_Port GPIOB
 #define SPI_MOSI_Pin GPIO_PIN_5
 #define SPI_MOSI_GPIO_Port GPIOB
+#define MRF_RESET_Pin GPIO_PIN_6
+#define MRF_RESET_GPIO_Port GPIOB
+#define MRF_WAKE_Pin GPIO_PIN_7
+#define MRF_WAKE_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
