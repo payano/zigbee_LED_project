@@ -174,7 +174,6 @@ int main(void)
   HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_4);
 
-  while(1){;}
   // Start ADC:
   // ADC will go to a callback method: void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
   HAL_ADC_Start_DMA(&hadc, (uint32_t*)ADC_BUF,2);
@@ -193,6 +192,7 @@ int main(void)
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
   if(hadc->Instance == ADC1){
+    auto kalle = ADC_BUF[3];
     using namespace HandlerPkg;
     HalHandler::setInterrupted(HandlerName::Hal);
   }
@@ -368,7 +368,7 @@ static void MX_TIM3_Init(void)
   }
 
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 127;
+  sConfigOC.Pulse = 254;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)

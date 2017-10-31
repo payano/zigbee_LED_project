@@ -19,6 +19,7 @@ private:
   int mPotentiometerValue;
   bool mButtonStatus;
   IHandler* mRecipients[HandlerName::SIZE];
+  int mBouncing = 0;
 
 public:
    ButtonHandler(HandlerName whoami, HalHandler* halHandler);

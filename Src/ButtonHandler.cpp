@@ -31,6 +31,10 @@ void ButtonHandler::addMessage(MessagePkg::Message* message){
 
 void ButtonHandler::run() {
 
+  if(mBouncing > 0){
+    --mBouncing;
+  }
+
    while(!mQueue->empty()){
      // Get element from queue
      MessagePkg::Message message;
@@ -42,6 +46,12 @@ void ButtonHandler::run() {
      case MessagePkg::Pressed:
        // the button does not know the state of the LED.
        // or should it know the state?
+
+       // is it a button bounce?
+       if(mBouncing != 0){
+         // bounce
+         break;
+       }
        mButtonStatus = !mButtonStatus;
        if(mButtonStatus){
          message.value = 1;
@@ -49,6 +59,8 @@ void ButtonHandler::run() {
          message.value = 0;
        }
        mRecipients[HandlerName::Led]->addMessage(&message);
+
+       mBouncing = 15;
        break;
 
      case MessagePkg::Potentiometer:

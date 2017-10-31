@@ -70,7 +70,7 @@ void HalHandler::run() {
       message.toAddress = HandlerName::Button1;
       message.fromAddress = HandlerName::Hal;
       message.type = Register::Potentiometer;
-      message.value = potentiometerToButtonValue(&mAdcBuffer[0]);
+      message.value = potentiometerToButtonValue(&mAdcBuffer[1]);
       mRecipients[HandlerName::Button1]->addMessage(&message);
     }
     {
@@ -80,7 +80,7 @@ void HalHandler::run() {
       message.toAddress = HandlerName::Button2;
       message.fromAddress = HandlerName::Hal;
       message.type = Register::Potentiometer;
-      message.value = potentiometerToButtonValue(&mAdcBuffer[1]);
+      message.value = potentiometerToButtonValue(&mAdcBuffer[0]);
       mRecipients[HandlerName::Button2]->addMessage(&message);
     }
     {

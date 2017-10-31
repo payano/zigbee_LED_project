@@ -23,10 +23,10 @@ enum HandlerName {
 };
 // assuming that everything runs on the same channel.
 enum Channel {
-  RGB_R = 0,
-  RGB_G,
-  RGB_B,
+  RGB_B = 0,
   PANEL,
+  RGB_R,
+  RGB_G,
   CHANNEL_SIZE
 };
 }

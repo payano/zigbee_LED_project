@@ -60,7 +60,7 @@ void LedHandler::run() {
           mHalHandler->setPWM(Channel::RGB_B, &mLedValue[Channel::RGB_B]);
         }else{
           // turn off RGB
-          int value = 0;
+          int value = 254;
           mHalHandler->setPWM(Channel::RGB_R, &value);
           mHalHandler->setPWM(Channel::RGB_G, &value);
           mHalHandler->setPWM(Channel::RGB_B, &value);
@@ -84,7 +84,7 @@ void LedHandler::run() {
         }else
         {
           // turn off PANEL
-          int value = 0;
+          int value = 254;
           mHalHandler->setPWM(Channel::PANEL, &value);
         }
       }
