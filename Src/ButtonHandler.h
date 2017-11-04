@@ -10,6 +10,8 @@
 #include "IHandler.h"
 
 namespace HandlerPkg{
+constexpr int BOUNCE_THRESHOLD = 25;
+constexpr int MIN_POT_VAL = 10;
 
 class ButtonHandler: public HandlerPkg::IHandler {
 private:
@@ -19,7 +21,7 @@ private:
   int mPotentiometerValue;
   bool mButtonStatus;
   IHandler* mRecipients[HandlerName::SIZE];
-  int mBouncing = 0;
+  int mBouncing;
 
 public:
    ButtonHandler(HandlerName whoami, HalHandler* halHandler);

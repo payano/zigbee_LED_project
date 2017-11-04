@@ -13,8 +13,9 @@ ButtonHandler::ButtonHandler(HandlerName whoami, HalHandler* halHandler):
                       mQueue(new MessagePkg::MessageBox(5)),
                       mWhoami(whoami),
                       mHalHandler(halHandler),
-                      mPotentiometerValue(0),
-                      mButtonStatus(false)
+                      mPotentiometerValue(30),
+                      mButtonStatus(false),
+                      mBouncing(0)
                       {
    // TODO Auto-generated constructor stub
 
@@ -60,13 +61,16 @@ void ButtonHandler::run() {
        }
        mRecipients[HandlerName::Led]->addMessage(&message);
 
-       mBouncing = 15;
+       mBouncing = 25;
        break;
 
      case MessagePkg::Potentiometer:
      {
        int diff = mPotentiometerValue - message.value;
        if(diff < 0){diff *= -1;}
+       if(message.value > (254-MIN_POT_VAL)){
+         message.value = (254-MIN_POT_VAL);
+       }
 
        if(mButtonStatus && diff > 5){
          // if button is "off", don't send potentiometer information
@@ -90,4 +94,5 @@ void ButtonHandler::run() {
 void ButtonHandler::addRecipient(IHandler* recipient, HandlerName recipientName){
    mRecipients[recipientName] = recipient;
 }
+
 }
