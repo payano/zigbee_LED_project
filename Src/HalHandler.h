@@ -42,6 +42,7 @@ public:
 
   void addMessage(MessagePkg::Message* message) override;
   void run() override;
+  void init() override;
   static void setInterrupted(HandlerName handler);
   virtual bool getInterrupted(const HandlerName *handler);
   virtual void enableInterrupt(const HandlerName *handler);

@@ -90,6 +90,9 @@ void ButtonHandler::run() {
    mHalHandler->enableInterrupt(&mWhoami);
 
 }
+void ButtonHandler::init(){
+  // Do nothing
+}
 
 void ButtonHandler::addRecipient(IHandler* recipient, HandlerName recipientName){
    mRecipients[recipientName] = recipient;

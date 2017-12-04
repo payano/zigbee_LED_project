@@ -28,6 +28,7 @@ public:
    virtual ~ButtonHandler();
    void addMessage(MessagePkg::Message* message) override;
    void run() override;
+   void init() override;
    void addRecipient(IHandler* recipient, HandlerName recipientName) override;
 };
 }

@@ -174,6 +174,11 @@ int main(void)
   HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_4);
 
+  // Init all objects.
+  for(IHandler* item : mHandlers){
+    item->init();
+  }
+
   // Start ADC:
   // ADC will go to a callback method: void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
   HAL_ADC_Start_DMA(&hadc, (uint32_t*)ADC_BUF,2);
@@ -192,7 +197,6 @@ int main(void)
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
   if(hadc->Instance == ADC1){
-    auto kalle = ADC_BUF[3];
     using namespace HandlerPkg;
     HalHandler::setInterrupted(HandlerName::Hal);
   }

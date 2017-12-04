@@ -97,6 +97,18 @@ void LedHandler::run() {
     }
   }
 }
+void LedHandler::init(){
+  // Make them bright and dim down to off
+  for(int i = 0; i < 254; ++i){
+    mHalHandler->setPWM(Channel::PANEL, &i);
+    mHalHandler->setPWM(Channel::RGB_R, &i);
+    mHalHandler->setPWM(Channel::RGB_G, &i);
+    mHalHandler->setPWM(Channel::RGB_B, &i);
+    HAL_Delay(10);
+  }
+
+}
+
 void LedHandler::addRecipient(IHandler* recipient, HandlerName recipientName){
   mRecipients[recipientName] = recipient;
 }

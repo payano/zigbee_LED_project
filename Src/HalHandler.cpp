@@ -136,6 +136,9 @@ void HalHandler::run() {
   enableInterrupt(&mWhoami);
 }
 
+void HalHandler::init(){
+  // Do nothing
+}
 void HalHandler::setInterrupted(HandlerName handler){
   //got an interrupt
   sInterrupted[handler] = true;
