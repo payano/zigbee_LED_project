@@ -72,7 +72,7 @@ void ButtonHandler::run() {
          message.value = (254-MIN_POT_VAL);
        }
 
-       if(mButtonStatus && diff > 5){
+       if(mButtonStatus && diff > 2){
          // if button is "off", don't send potentiometer information
          mRecipients[HandlerName::Led]->addMessage(&message);
          mPotentiometerValue = message.value;
