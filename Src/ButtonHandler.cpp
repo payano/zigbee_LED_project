@@ -15,7 +15,8 @@ ButtonHandler::ButtonHandler(HandlerName whoami, HalHandler* halHandler):
                       mHalHandler(halHandler),
                       mPotentiometerValue(30),
                       mButtonStatus(false),
-                      mBouncing(0)
+                      mBouncing(0),
+                      mFalsePos(0)
                       {
    // TODO Auto-generated constructor stub
 
@@ -34,6 +35,7 @@ void ButtonHandler::run() {
 
   if(mBouncing > 0){
     --mBouncing;
+    mFalsePos = 0;
   }
 
    while(!mQueue->empty()){
@@ -48,11 +50,18 @@ void ButtonHandler::run() {
        // the button does not know the state of the LED.
        // or should it know the state?
 
+       // is it a false positive?
+       if(mFalsePos++ != BOUNCE_FALSE_POSITIVE){
+         break;
+       }
+
        // is it a button bounce?
        if(mBouncing != 0){
          // bounce
          break;
        }
+       mBouncing = BOUNCE_THRESHOLD;
+
        mButtonStatus = !mButtonStatus;
        if(mButtonStatus){
          message.value = 1;
@@ -60,8 +69,6 @@ void ButtonHandler::run() {
          message.value = 0;
        }
        mRecipients[HandlerName::Led]->addMessage(&message);
-
-       mBouncing = 25;
        break;
 
      case MessagePkg::Potentiometer:

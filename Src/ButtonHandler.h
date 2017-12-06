@@ -11,6 +11,7 @@
 
 namespace HandlerPkg{
 constexpr int BOUNCE_THRESHOLD = 25;
+constexpr int BOUNCE_FALSE_POSITIVE = 1;
 constexpr int MIN_POT_VAL = 10;
 
 class ButtonHandler: public HandlerPkg::IHandler {
@@ -22,6 +23,7 @@ private:
   bool mButtonStatus;
   IHandler* mRecipients[HandlerName::SIZE];
   int mBouncing;
+  int mFalsePos;
 
 public:
    ButtonHandler(HandlerName whoami, HalHandler* halHandler);
