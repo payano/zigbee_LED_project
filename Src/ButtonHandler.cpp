@@ -51,7 +51,11 @@ void ButtonHandler::run() {
        // or should it know the state?
 
        // is it a false positive?
-       if(mFalsePos++ != BOUNCE_FALSE_POSITIVE){
+       if(
+           mFalsePos++ != BOUNCE_FALSE_POSITIVE &&
+           message.fromAddress == HandlerPkg::HandlerName::Hal
+         )
+       {
          break;
        }
 
