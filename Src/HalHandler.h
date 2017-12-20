@@ -51,6 +51,7 @@ public:
   virtual void getPWM(const Channel channel, int* value);
   virtual int potentiometerToButtonValue(const uint32_t* value);
   void addRecipient(IHandler* recipient, HandlerName recipientName) override;
+  bool readGpio(const HandlerName *handler);
 
 };
 }

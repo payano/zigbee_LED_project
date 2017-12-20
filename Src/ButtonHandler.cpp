@@ -14,10 +14,8 @@ ButtonHandler::ButtonHandler(HandlerName whoami, HalHandler* halHandler):
                       mWhoami(whoami),
                       mHalHandler(halHandler),
                       mPotentiometerValue(30),
-                      mButtonStatus(false),
-                      mBouncing(0),
-                      mFalsePos(0)
-                      {
+                      mButtonStatus(false)
+{
    // TODO Auto-generated constructor stub
 
 }
@@ -33,11 +31,6 @@ void ButtonHandler::addMessage(MessagePkg::Message* message){
 
 void ButtonHandler::run() {
 
-  if(mBouncing > 0){
-    --mBouncing;
-    mFalsePos = 0;
-  }
-
    while(!mQueue->empty()){
      // Get element from queue
      MessagePkg::Message message;
@@ -50,21 +43,13 @@ void ButtonHandler::run() {
        // the button does not know the state of the LED.
        // or should it know the state?
 
-       // is it a false positive?
-       if(
-           mFalsePos++ != BOUNCE_FALSE_POSITIVE &&
-           message.fromAddress == HandlerPkg::HandlerName::Hal
-         )
-       {
-         break;
-       }
+       // Delay and check if the button is still pressed.
+       HAL_Delay(DELAY_TIME);
 
-       // is it a button bounce?
-       if(mBouncing != 0){
-         // bounce
+       if(!mHalHandler->readGpio(&mWhoami)){
+         // Button is not pressed anymore.
          break;
        }
-       mBouncing = BOUNCE_THRESHOLD;
 
        mButtonStatus = !mButtonStatus;
        if(mButtonStatus){
