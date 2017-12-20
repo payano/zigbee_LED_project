@@ -14,9 +14,8 @@ ButtonHandler::ButtonHandler(HandlerName whoami, HalHandler* halHandler):
                       mWhoami(whoami),
                       mHalHandler(halHandler),
                       mPotentiometerValue(30),
-                      mButtonStatus(false),
-                      mBouncing(0)
-                      {
+                      mButtonStatus(false)
+{
    // TODO Auto-generated constructor stub
 
 }
@@ -32,10 +31,6 @@ void ButtonHandler::addMessage(MessagePkg::Message* message){
 
 void ButtonHandler::run() {
 
-  if(mBouncing > 0){
-    --mBouncing;
-  }
-
    while(!mQueue->empty()){
      // Get element from queue
      MessagePkg::Message message;
@@ -48,11 +43,14 @@ void ButtonHandler::run() {
        // the button does not know the state of the LED.
        // or should it know the state?
 
-       // is it a button bounce?
-       if(mBouncing != 0){
-         // bounce
+       // Delay and check if the button is still pressed.
+       HAL_Delay(DELAY_TIME);
+
+       if(!mHalHandler->readGpio(&mWhoami)){
+         // Button is not pressed anymore.
          break;
        }
+
        mButtonStatus = !mButtonStatus;
        if(mButtonStatus){
          message.value = 1;
@@ -60,8 +58,6 @@ void ButtonHandler::run() {
          message.value = 0;
        }
        mRecipients[HandlerName::Led]->addMessage(&message);
-
-       mBouncing = 25;
        break;
 
      case MessagePkg::Potentiometer:
@@ -72,7 +68,7 @@ void ButtonHandler::run() {
          message.value = (254-MIN_POT_VAL);
        }
 
-       if(mButtonStatus && diff > 5){
+       if(mButtonStatus && diff > 2){
          // if button is "off", don't send potentiometer information
          mRecipients[HandlerName::Led]->addMessage(&message);
          mPotentiometerValue = message.value;
@@ -89,6 +85,9 @@ void ButtonHandler::run() {
    // do that here?
    mHalHandler->enableInterrupt(&mWhoami);
 
+}
+void ButtonHandler::init(){
+  // Do nothing
 }
 
 void ButtonHandler::addRecipient(IHandler* recipient, HandlerName recipientName){

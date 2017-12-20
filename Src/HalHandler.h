@@ -42,6 +42,7 @@ public:
 
   void addMessage(MessagePkg::Message* message) override;
   void run() override;
+  void init() override;
   static void setInterrupted(HandlerName handler);
   virtual bool getInterrupted(const HandlerName *handler);
   virtual void enableInterrupt(const HandlerName *handler);
@@ -50,6 +51,7 @@ public:
   virtual void getPWM(const Channel channel, int* value);
   virtual int potentiometerToButtonValue(const uint32_t* value);
   void addRecipient(IHandler* recipient, HandlerName recipientName) override;
+  bool readGpio(const HandlerName *handler);
 
 };
 }

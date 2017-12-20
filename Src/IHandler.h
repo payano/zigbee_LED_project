@@ -20,6 +20,7 @@ class IHandler {
 public:
    virtual ~IHandler(){};
    virtual void run() = 0;
+   virtual void init() = 0;
    virtual void addMessage(MessagePkg::Message* message) = 0;
    virtual void addRecipient(IHandler* recipient, HandlerName recipientName) = 0;
 };

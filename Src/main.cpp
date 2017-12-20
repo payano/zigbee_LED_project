@@ -174,6 +174,11 @@ int main(void)
   HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_4);
 
+  // Init all objects.
+  for(IHandler* item : mHandlers){
+    item->init();
+  }
+
   // Start ADC:
   // ADC will go to a callback method: void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
   HAL_ADC_Start_DMA(&hadc, (uint32_t*)ADC_BUF,2);
@@ -192,7 +197,6 @@ int main(void)
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
   if(hadc->Instance == ADC1){
-    auto kalle = ADC_BUF[3];
     using namespace HandlerPkg;
     HalHandler::setInterrupted(HandlerName::Hal);
   }
@@ -453,7 +457,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pin = SPI_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(SPI_CS_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : SPI_INT_Pin */

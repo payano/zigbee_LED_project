@@ -11,8 +11,9 @@
 
 namespace HandlerPkg{
 constexpr int BOUNCE_THRESHOLD = 25;
+constexpr int BOUNCE_FALSE_POSITIVE = 1;
 constexpr int MIN_POT_VAL = 10;
-
+constexpr int DELAY_TIME = 60;
 class ButtonHandler: public HandlerPkg::IHandler {
 private:
   MessagePkg::MessageBox *mQueue;
@@ -21,13 +22,13 @@ private:
   int mPotentiometerValue;
   bool mButtonStatus;
   IHandler* mRecipients[HandlerName::SIZE];
-  int mBouncing;
 
 public:
    ButtonHandler(HandlerName whoami, HalHandler* halHandler);
    virtual ~ButtonHandler();
    void addMessage(MessagePkg::Message* message) override;
    void run() override;
+   void init() override;
    void addRecipient(IHandler* recipient, HandlerName recipientName) override;
 };
 }

@@ -7,6 +7,7 @@
 
 #include "HalHandler.h"
 #include "Message.h"
+#include "stm32f0xx_hal_gpio.h"
 
 //#include "stm32f0xx_hal.h"
 
@@ -136,6 +137,9 @@ void HalHandler::run() {
   enableInterrupt(&mWhoami);
 }
 
+void HalHandler::init(){
+  // Do nothing
+}
 void HalHandler::setInterrupted(HandlerName handler){
   //got an interrupt
   sInterrupted[handler] = true;
@@ -173,6 +177,26 @@ void HalHandler::enableInterrupt(const HandlerName *handler){
   }
 }
 
+bool HalHandler::readGpio(const HandlerName *handler){
+  GPIO_TypeDef* GPIOx;
+  uint16_t GPIO_Pin;
+  switch(*handler){
+  // Maybe change this to some enum.
+  case Button1:
+    GPIOx = BUTTON_1_GPIO_Port;
+    GPIO_Pin = BUTTON_1_Pin;
+    break;
+  case Button2:
+    GPIOx = BUTTON_2_GPIO_Port;
+    GPIO_Pin = BUTTON_2_Pin;
+    break;
+  default:
+    // do nothing
+    return false;
+    break;
+  }
+  return (HAL_GPIO_ReadPin(GPIOx, GPIO_Pin) == GPIO_PIN_SET) ? true : false;
+}
 void HalHandler::disableInterrupt(const HandlerName *handler){
   sInterrupted[*handler] = false;
 

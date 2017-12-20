@@ -41,6 +41,10 @@ void RadioHandler::run() {
 
 }
 
+void RadioHandler::init(){
+  // Implement here
+}
+
 void RadioHandler::addRecipient(IHandler* recipient, HandlerName recipientName){
    mRecipients[recipientName] = recipient;
 
