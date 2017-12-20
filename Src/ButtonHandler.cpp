@@ -48,7 +48,8 @@ void ButtonHandler::run() {
 
        if(!mHalHandler->readGpio(&mWhoami)){
          // Button is not pressed anymore.
-         break;
+    	   mHalHandler->enableInterrupt(&mWhoami);
+    	   break;
        }
 
        mButtonStatus = !mButtonStatus;
@@ -58,6 +59,10 @@ void ButtonHandler::run() {
          message.value = 0;
        }
        mRecipients[HandlerName::Led]->addMessage(&message);
+
+       // do that here?
+       HAL_Delay(DELAY_TIME*2);
+       mHalHandler->enableInterrupt(&mWhoami);
        break;
 
      case MessagePkg::Potentiometer:
@@ -81,9 +86,6 @@ void ButtonHandler::run() {
        break;
      }
    }
-
-   // do that here?
-   mHalHandler->enableInterrupt(&mWhoami);
 
 }
 void ButtonHandler::init(){

@@ -13,7 +13,7 @@ namespace HandlerPkg{
 constexpr int BOUNCE_THRESHOLD = 25;
 constexpr int BOUNCE_FALSE_POSITIVE = 1;
 constexpr int MIN_POT_VAL = 10;
-constexpr int DELAY_TIME = 60;
+constexpr int DELAY_TIME = 50;
 class ButtonHandler: public HandlerPkg::IHandler {
 private:
   MessagePkg::MessageBox *mQueue;
