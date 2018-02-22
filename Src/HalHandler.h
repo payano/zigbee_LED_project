@@ -28,13 +28,14 @@ private:
   HandlerName mWhoami;
   ADC_HandleTypeDef *mHadc;
   TIM_HandleTypeDef *mTimer;
+  SPI_HandleTypeDef *mSpi;
   uint16_t pwmPulseValues[PWM_CHANNELS];
   IHandler* mRecipients[HandlerName::SIZE];
   static bool sInterrupted[HandlerName::SIZE]; //static
   TIM_OC_InitTypeDef* pwmConfig[PWM_CHANNELS];
 
 public:
-  HalHandler(HandlerName whoami, ADC_HandleTypeDef *hadc, TIM_HandleTypeDef *timer);
+  HalHandler(HandlerName whoami, ADC_HandleTypeDef *hadc, TIM_HandleTypeDef *timer, SPI_HandleTypeDef *hspi1);
   virtual ~HalHandler();
 
   //static void putInterruptData(uint32_t InterruptIncData[3]);

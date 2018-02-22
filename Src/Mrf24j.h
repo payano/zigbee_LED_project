@@ -145,6 +145,14 @@ typedef uint16_t word;
 #define MRF_I_RXIF  0b00001000
 #define MRF_I_TXNIF 0b00000001
 
+// Johans implementation
+typedef struct gpio_pin {
+  GPIO_TypeDef* port;
+  uint16_t pin;
+
+} gpio_pin ;
+
+
 typedef struct _rx_info_t{
     uint8_t frame_length;
     uint8_t rx_data[116]; //max data length = (127 aMaxPHYPacketSize - 2 Frame control - 1 sequence number - 2 panid - 2 shortAddr Destination - 2 shortAddr Source - 2 FCS)
@@ -164,7 +172,7 @@ typedef struct _tx_info_t{
 class Mrf24j
 {
     public:
-        Mrf24j(int pin_reset, int pin_chip_select, int pin_interrupt);
+        Mrf24j(SPI_HandleTypeDef* spi, gpio_pin* pin_reset, gpio_pin* pin_chip_select, gpio_pin* pin_interrupt);
         void reset(void);
         void init(void);
 
@@ -188,6 +196,7 @@ class Mrf24j
          * Set the channel, using 802.15.4 channel numbers (11..26)
          */
         void set_channel(byte channel);
+        byte get_channel();
 
         void rx_enable(void);
         void rx_disable(void);
@@ -224,9 +233,10 @@ class Mrf24j
         void check_flags(void (*rx_handler)(void), void (*tx_handler)(void));
 
     private:
-        int _pin_reset;
-        int _pin_cs;
-        int _pin_int;
+        SPI_HandleTypeDef* spi;
+        gpio_pin* pin_reset;
+        gpio_pin* pin_cs;
+        gpio_pin* pin_int;
 
         void pinMode(int pin, int output);
 };

@@ -14,12 +14,13 @@
 namespace HandlerPkg{
 bool HalHandler::sInterrupted[HandlerName::SIZE] = {false};
 
-HalHandler::HalHandler(HandlerName whoami, ADC_HandleTypeDef *hadc, TIM_HandleTypeDef *timer):
+HalHandler::HalHandler(HandlerName whoami, ADC_HandleTypeDef *hadc, TIM_HandleTypeDef *timer, SPI_HandleTypeDef *hspi1):
       mAdcBuffer(nullptr),
       mAdcBufferLen(0),
       mWhoami(whoami),
       mHadc(hadc),
-      mTimer(timer){
+      mTimer(timer),
+      mSpi(hspi1){
 
   for(int i = 0; i < PWM_CHANNELS; ++i){
     pwmPulseValues[i] = 0; //set PWM pulse to zero, it is off by default.

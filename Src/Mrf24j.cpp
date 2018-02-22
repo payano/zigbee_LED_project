@@ -4,6 +4,7 @@
  */
 
 #include "Mrf24j.h"
+//#include "stm32f3xx_hal_spi.h"
 
 // aMaxPHYPacketSize = 127, from the 802.15.4-2006 standard.
 static uint8_t rx_buf[127];
@@ -29,83 +30,90 @@ static tx_info_t tx_info;
  * Constructor MRF24J Object.
  * @param pin_reset, @param pin_chip_select, @param pin_interrupt
  */
-Mrf24j::Mrf24j(int pin_reset, int pin_chip_select, int pin_interrupt) {
-  _pin_reset = pin_reset;
-  _pin_cs = pin_chip_select;
-  _pin_int = pin_interrupt;
+Mrf24j::Mrf24j(SPI_HandleTypeDef* spi,gpio_pin* pin_reset, gpio_pin* pin_chip_select, gpio_pin* pin_interrupt):
+      spi(spi),
+      pin_reset(pin_reset),
+      pin_cs(pin_chip_select),
+      pin_int(pin_interrupt)
+{
 
-  /*
-    pinMode(_pin_reset, OUTPUT);
-    pinMode(_pin_cs, OUTPUT);
-    pinMode(_pin_int, INPUT);
-
-    SPI.setBitOrder(MSBFIRST) ;
-    SPI.setDataMode(SPI_MODE0);
-    SPI.begin();
-   */
+  HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_SET);
 }
 
 void Mrf24j::reset(void) {
-  /*
-    digitalWrite(_pin_reset, LOW);
-    delay(10);  // just my gut
-    digitalWrite(_pin_reset, HIGH);
-    delay(20);  // from manual
-   */
+  // I cant reset the mrf.... PCB does not have a pin for that!
+//  HAL_GPIO_WritePin(pin_reset->port, pin_reset->pin, GPIO_PIN_RESET);
+//  HAL_Delay(100);
+//  HAL_GPIO_WritePin(pin_reset->port, pin_reset->pin, GPIO_PIN_SET);
+//  HAL_Delay(200);
 }
 
 byte Mrf24j::read_short(byte address) {
-  /*
-    digitalWrite(_pin_cs, LOW);
-    // 0 top for short addressing, 0 bottom for read
-    SPI.transfer(address<<1 & 0b01111110);
-    byte ret = SPI.transfer(0x00);
-    digitalWrite(_pin_cs, HIGH);
-    return ret;
-   */
-  return 0;
+
+  HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_RESET);
+
+  address = address<<1 & 0b01111110;
+  HAL_SPI_Transmit(spi, &address, 1,1);
+
+  byte ret = 0x0;
+  byte bogus = 0x00;
+  HAL_SPI_TransmitReceive(spi, &bogus, &ret, 1, 1);
+//  HAL_SPI_Receive(spi, &ret,1,1);
+
+  HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_SET);
+
+  return ret;
 }
 
 byte Mrf24j::read_long(word address) {
-  /*
-    digitalWrite(_pin_cs, LOW);
-    byte ahigh = address >> 3;
-    byte alow = address << 5;
-    SPI.transfer(0x80 | ahigh);  // high bit for long
-    SPI.transfer(alow);
-    byte ret = SPI.transfer(0);
-    digitalWrite(_pin_cs, HIGH);
-    return ret;
-   */
-  return 0;
+  HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_RESET);
+
+  byte ahigh = 0x80 | (address >> 3);
+  byte alow = address << 5;
+
+  HAL_SPI_Transmit(spi, &ahigh, 1,1);
+  HAL_SPI_Transmit(spi, &alow, 1,1);
+
+  byte ret;
+  byte bogus = 0x00;
+  HAL_SPI_TransmitReceive(spi, &bogus, &ret, 1, 1);
+  //HAL_SPI_Receive(spi, &ret,1,1);
+
+  HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_SET);
+
+  return ret;
 }
 
 
 void Mrf24j::write_short(byte address, byte data) {
-  /*
-  digitalWrite(_pin_cs, LOW);
-  // 0 for top short address, 1 bottom for write
-  SPI.transfer((address<<1 & 0b01111110) | 0x01);
-  SPI.transfer(data);
-  digitalWrite(_pin_cs, HIGH);
-  */
+  HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_RESET);
+
+  address = (address<<1 & 0b01111110) | 0x01;
+  HAL_SPI_Transmit(spi, &address, 1,1);
+  HAL_SPI_Transmit(spi, &data, 1,1);
+
+  HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_SET);
+
 }
 
 void Mrf24j::write_long(word address, byte data) {
-  /*
-  digitalWrite(_pin_cs, LOW);
-  byte ahigh = address >> 3;
-  byte alow = address << 5;
-  SPI.transfer(0x80 | ahigh);  // high bit for long
-  SPI.transfer(alow | 0x10);  // last bit for write
-  SPI.transfer(data);
-  digitalWrite(_pin_cs, HIGH);
-  */
+  HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_RESET);
+
+  byte ahigh = 0x80 | (address >> 3);
+  byte alow = (address << 5) | 0x10;
+
+  HAL_SPI_Transmit(spi, &ahigh, 1,1);
+  HAL_SPI_Transmit(spi, &alow, 1,1);
+
+  HAL_SPI_Transmit(spi, &data, 1,1);
+
+  HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_SET);
+
 }
 
 word Mrf24j::get_pan(void) {
   byte panh = read_short(MRF_PANIDH);
-  return panh << 8 | read_short(MRF_PANIDL);
+  return (panh << 8) | read_short(MRF_PANIDL);
 }
 
 void Mrf24j::set_pan(word panid) {
@@ -160,6 +168,58 @@ void Mrf24j::send16(word dest16, char * data, byte len) {
   }
   // ack on, and go!
   write_short(MRF_TXNCON, (1<<MRF_TXNACKREQ | 1<<MRF_TXNTRIG));
+
+  //byte len = strlen(data); // get the length of the char* array
+//  int i = 0;
+//  write_long(i++, bytes_MHR); // header length
+//  // +ignoreBytes is because some module seems to ignore 2 bytes after the header?!.
+//  // default: ignoreBytes = 0;
+//
+//
+//  //bytes_MHR = 2 Frame control + 1 sequence number + 2 panid + 8 shortAddr Destination + 8 shortAddr Source
+//  bytes_MHR = 15;
+//  write_long(i++, bytes_MHR+ignoreBytes+len);
+//
+//  // 0 | pan compression | ack | no security | no data pending | data frame[3 bits]
+//  write_long(i++, 0x61); // first byte of Frame Control
+//  // 16 bit source, 802.15.4 (2003), 16 bit dest,
+//  write_long(i++, 0x8c); // second byte of frame control
+//  write_long(i++, 1);  // sequence number 1
+//
+//  word panid = get_pan();
+//
+//  write_long(i++, panid & 0xff);  // dest panid
+//  write_long(i++, panid >> 8);
+//
+//  // Dest
+//  write_long(i++, 0x57);
+//  write_long(i++, 0xeb);
+//  write_long(i++, 0x1c);
+//  write_long(i++, 0xe4);
+//  write_long(i++, 0xd6);
+//  write_long(i++, 0x2c);
+//  write_long(i++, 0x55);
+//  write_long(i++, 0xd6);
+//  //write_long(i++, dest16 & 0xff);  // dest16 low
+//  //write_long(i++, dest16 >> 8); // dest16 high
+//
+//  // Source
+//  word src16 = address16_read();
+//  write_long(i++, 0xb2);
+//  write_long(i++, 0x94);
+//
+//
+//  //write_long(i++, src16 & 0xff); // src16 low
+//  //write_long(i++, src16 >> 8); // src16 high
+//
+//  // All testing seems to indicate that the next two bytes are ignored.
+//  //2 bytes on FCS appended by TXMAC
+//  i+=ignoreBytes;
+//  for (int q = 0; q < len; q++) {
+//    write_long(i++, data[q]);
+//  }
+//  // ack on, and go!
+//  write_short(MRF_TXNCON, (1<<MRF_TXNACKREQ | 1<<MRF_TXNTRIG));
 }
 
 void Mrf24j::set_interrupts(void) {
@@ -170,17 +230,24 @@ void Mrf24j::set_interrupts(void) {
 /** use the 802.15.4 channel numbers..
  */
 void Mrf24j::set_channel(byte channel) {
+  //  (((channel - 11) << 4) | 0x03));
   write_long(MRF_RFCON0, (((channel - 11) << 4) | 0x03));
 }
 
+byte Mrf24j::get_channel() {
+  byte ret = read_long(MRF_RFCON0);
+  ret = (ret >> 4) + 1 ;
+  return ret;
+}
+
 void Mrf24j::init(void) {
-  /*
-    // Seems a bit ridiculous when I use reset pin anyway
-    write_short(MRF_SOFTRST, 0x7); // from manual
-    while (read_short(MRF_SOFTRST) & 0x7 != 0) {
-        ; // wait for soft reset to finish
-    }
-   */
+
+  // Seems a bit ridiculous when I use reset pin anyway
+  write_short(MRF_SOFTRST, 0x7); // from manual
+  while ((read_short(MRF_SOFTRST) & 0x7) != 0) {
+    ; // wait for soft reset to finish
+  }
+
   write_short(MRF_PACON2, 0x98); // – Initialize FIFOEN = 1 and TXONTS = 0x6.
   write_short(MRF_TXSTBL, 0x95); // – Initialize RFSTBL = 0x9.
 
@@ -198,12 +265,16 @@ void Mrf24j::init(void) {
   write_short(MRF_CCAEDTH, 0x60); // – Set CCA ED threshold.
   write_short(MRF_BBREG6, 0x40); // – Set appended RSSI value to RXFIFO.
   set_interrupts();
-  set_channel(12);
+  //
+  set_channel(11);
   // max power is by default.. just leave it...
   // Set transmitter power - See “REGISTER 2-62: RF CONTROL 3 REGISTER (ADDRESS: 0x203)”.
   write_short(MRF_RFCTL, 0x04); //  – Reset RF state machine.
   write_short(MRF_RFCTL, 0x00); // part 2
   //delay(1); // delay at least 192usec
+
+  HAL_Delay(250);
+
 }
 
 /**

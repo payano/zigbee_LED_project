@@ -133,7 +133,7 @@ int main(void)
 
   IHandler* mHandlers[HandlerName::SIZE];
 
-  HalHandler* Hal             = new HalHandler(HandlerName::Hal, &hadc, &htim3);
+  HalHandler* Hal             = new HalHandler(HandlerName::Hal, &hadc, &htim3, &hspi1);
   ButtonHandler* button1      = new ButtonHandler(HandlerName::Button1, Hal);
   ButtonHandler* button2      = new ButtonHandler(HandlerName::Button2, Hal);
   LedHandler* Led             = new LedHandler(HandlerName::Led, Hal);
