@@ -10,7 +10,7 @@
   * inserted by the user or by software development tools
   * are owned by their respective copyright owners.
   *
-  * COPYRIGHT(c) 2017 STMicroelectronics
+  * COPYRIGHT(c) 2018 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -104,7 +104,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     if (HAL_DMA_Init(&hdma_adc) != HAL_OK)
     {
       while(1){;}
-      //_Error_Handler(__FILE__, __LINE__);
+//      _Error_Handler(__FILE__, __LINE__);
     }
 
     __HAL_LINKDMA(hadc,DMA_Handle,hdma_adc);

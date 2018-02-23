@@ -136,6 +136,8 @@ void HalHandler::run() {
 
   // Enable ADC
   enableInterrupt(&mWhoami);
+  auto yolo = HandlerName::Radio;
+  enableInterrupt(&yolo);
 }
 
 void HalHandler::init(){

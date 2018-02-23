@@ -9,6 +9,8 @@
 
 #include "IHandler.h"
 
+class Mrf24j;
+
 namespace HandlerPkg{
 
 class RadioHandler: public IHandler {
@@ -17,8 +19,9 @@ private:
    HandlerName mWhoami;
    HalHandler* mHalHandler;
    IHandler* mRecipients[HandlerName::SIZE];
+   Mrf24j* mMrf24j;
 public:
-   RadioHandler(HandlerName whoami, HalHandler* halHandler);
+   RadioHandler(HandlerName whoami, HalHandler* halHandler, Mrf24j* mrf24j);
    virtual ~RadioHandler();
    void addMessage(MessagePkg::Message* message) override;
    void run() override;

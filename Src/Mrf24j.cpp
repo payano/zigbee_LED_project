@@ -289,6 +289,8 @@ void Mrf24j::interrupt_handler(void) {
     flag_got_rx++;
     // read out the packet data...
     //noInterrupts();
+//    HAL_NVIC_DisableIRQ(EXTI4_15_IRQn);
+
     rx_disable();
     // read start of rxfifo for, has 2 bytes more added by FCS. frame_length = m + n + 2
     uint8_t frame_length = read_long(0x300);
@@ -316,6 +318,7 @@ void Mrf24j::interrupt_handler(void) {
 
     rx_enable();
     //interrupts();
+//    HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
   }
   if (last_interrupt & MRF_I_TXNIF) {
     flag_got_tx++;

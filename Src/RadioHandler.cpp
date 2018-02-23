@@ -11,10 +11,11 @@
 #include "Mrf24j.h"
 
 namespace HandlerPkg {
-RadioHandler::RadioHandler(HandlerName whoami, HalHandler* halHandler):
+RadioHandler::RadioHandler(HandlerName whoami, HalHandler* halHandler, Mrf24j* mrf24j):
                mQueue(new MessagePkg::MessageBox(10)),
                mWhoami(whoami),
-               mHalHandler(halHandler){
+               mHalHandler(halHandler),
+               mMrf24j(mrf24j){
    // TODO Auto-generated constructor stub
 
 }
@@ -29,11 +30,23 @@ void RadioHandler::addMessage(MessagePkg::Message* message){
 }
 
 void RadioHandler::run() {
+  char one[] = "kitchen/white/light get ON";
+  int da_size = sizeof(one) / sizeof(one[0]);
+//  mMrf24j->send16(0xffff, one, da_size);
 	while(!mQueue->empty()){
 		//talk to MRF24J to send radio messages.
      // Get element from queue
      MessagePkg::Message message;
      mQueue->getMessage(&message);
+
+     if(message.fromAddress == HandlerPkg::Hal && message.type == MessagePkg::Interrupt){
+       // Incoming message from radio.
+       rx_info_t* radioMessage = mMrf24j->get_rxinfo();
+       auto olle = radioMessage->rx_data;
+       mHalHandler->enableInterrupt(&mWhoami);
+
+     }
+     mMrf24j->interrupt_handler();
 
      // Do something with the message
 
@@ -42,7 +55,17 @@ void RadioHandler::run() {
 }
 
 void RadioHandler::init(){
+
+  HAL_Delay(20);
+
+  mMrf24j->reset();
+  mMrf24j->init();
+
+  mMrf24j->set_pan(0x0023);
+  // This is _our_ address
+  mMrf24j->address16_write(0x6001);
   // Implement here
+  mMrf24j->set_interrupts();
 }
 
 void RadioHandler::addRecipient(IHandler* recipient, HandlerName recipientName){

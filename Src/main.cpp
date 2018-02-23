@@ -44,7 +44,7 @@
 #include "RadioHandler.h"
 #include "ButtonHandler.h"
 #include "HalHandler.h"
-
+#include "Mrf24j.h"
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc;
 DMA_HandleTypeDef hdma_adc;
@@ -65,7 +65,9 @@ static void MX_TIM3_Init(void);
 static void MX_ADC_Init(void);
 
 extern "C" void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
-                                
+
+Mrf24j* mrf24j;
+
 int main(void)
 {
   /* MCU Configuration----------------------------------------------------------*/
@@ -130,6 +132,14 @@ int main(void)
    */
   using namespace HandlerPkg;
 
+  gpio_pin pin_reset, pin_chip_select, pin_interrupt;
+  pin_chip_select.port = SPI_CS_GPIO_Port;
+  pin_chip_select.pin = SPI_CS_Pin;
+  pin_interrupt.port = SPI_INT_GPIO_Port;
+  pin_interrupt.pin = SPI_INT_Pin;
+
+
+  mrf24j = new Mrf24j(&hspi1, &pin_reset, &pin_chip_select, &pin_interrupt);
 
   IHandler* mHandlers[HandlerName::SIZE];
 
@@ -137,7 +147,7 @@ int main(void)
   ButtonHandler* button1      = new ButtonHandler(HandlerName::Button1, Hal);
   ButtonHandler* button2      = new ButtonHandler(HandlerName::Button2, Hal);
   LedHandler* Led             = new LedHandler(HandlerName::Led, Hal);
-  RadioHandler* radio         = new RadioHandler(HandlerName::Radio, Hal);
+  RadioHandler* radio         = new RadioHandler(HandlerName::Radio, Hal, mrf24j);
 
   //Right order is important.
   mHandlers[HandlerName::Hal] = Hal;
@@ -190,7 +200,7 @@ int main(void)
         item->run();
      }
 
- 	HAL_Delay(10);
+ 	HAL_Delay(1000);
   }
 
 }
@@ -203,6 +213,9 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+  if(GPIO_Pin == SPI_INT_Pin){
+    mrf24j->interrupt_handler();
+  }
 }
 
 /** System Clock Configuration
@@ -462,7 +475,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : SPI_INT_Pin */
   GPIO_InitStruct.Pin = SPI_INT_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(SPI_INT_GPIO_Port, &GPIO_InitStruct);
 
