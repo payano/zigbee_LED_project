@@ -9,7 +9,7 @@
 #include "Message.h"
 #include "HalHandler.h"
 #include "Mrf24j.h"
-
+#include <string.h>
 namespace HandlerPkg {
 RadioHandler::RadioHandler(HandlerName whoami, HalHandler* halHandler, Mrf24j* mrf24j):
                mQueue(new MessagePkg::MessageBox(10)),
@@ -42,7 +42,10 @@ void RadioHandler::run() {
      if(message.fromAddress == HandlerPkg::Hal && message.type == MessagePkg::Interrupt){
        // Incoming message from radio.
        rx_info_t* radioMessage = mMrf24j->get_rxinfo();
-       auto olle = radioMessage->rx_data;
+       std::string rx = (char*)radioMessage->rx_data;
+       auto yop = rx.c_str();
+       auto len = rx.size();
+
        mHalHandler->enableInterrupt(&mWhoami);
 
      }
