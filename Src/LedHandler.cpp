@@ -39,20 +39,20 @@ void LedHandler::run() {
     mQueue->getMessage(&message);
 
     // If
-    switch(message.fromAddress)
-    {
+    switch(message.fromAddress){
     case HandlerPkg::HandlerName::Button1:
       // This is the RGB button
-      if(message.type == MessagePkg::Register::Potentiometer){
+      switch(message.type){
+      case MessagePkg::Register::Potentiometer:{
         mLedValue[Channel::RGB_R] = message.value;
         mLedValue[Channel::RGB_G] = message.value;
         mLedValue[Channel::RGB_B] = message.value;
-        mHalHandler->setPWM(Channel::RGB_R, &message.value);
-        mHalHandler->setPWM(Channel::RGB_G, &message.value);
-        mHalHandler->setPWM(Channel::RGB_B, &message.value);
+        mHalHandler->setPWM(Channel::RGB_R, &mLedValue[Channel::RGB_R]);
+        mHalHandler->setPWM(Channel::RGB_G, &mLedValue[Channel::RGB_G]);
+        mHalHandler->setPWM(Channel::RGB_B, &mLedValue[Channel::RGB_B]);
       }
-      else if(message.type == MessagePkg::Register::Pressed)
-      {
+      break;
+      case MessagePkg::Register::Pressed:{
         if(message.value == 1){
           // turn on RGB
           mHalHandler->setPWM(Channel::RGB_R, &mLedValue[Channel::RGB_R]);
@@ -65,35 +65,42 @@ void LedHandler::run() {
           mHalHandler->setPWM(Channel::RGB_G, &value);
           mHalHandler->setPWM(Channel::RGB_B, &value);
         }
-
       }
       break;
-    case HandlerPkg::HandlerName::Button2:
-      // This is the PANEL button
-      if(message.type == MessagePkg::Register::Potentiometer)
-      {
-        mLedValue[Channel::PANEL] = message.value;
-        mHalHandler->setPWM(Channel::PANEL, &message.value);
+      default:
+        break;
       }
-      else if(message.type == MessagePkg::Register::Pressed)
-      {
-        if(message.value == 1)
-        {
-          // turn on PANEL
-          mHalHandler->setPWM(Channel::PANEL, &mLedValue[Channel::PANEL]);
-        }else
-        {
-          // turn off PANEL
-          int value = 254;
-          mHalHandler->setPWM(Channel::PANEL, &value);
+      break;
+      case HandlerPkg::HandlerName::Button2:
+        // This is the PANEL button
+        switch(message.type){
+        case MessagePkg::Register::Potentiometer:{
+          mLedValue[Channel::PANEL] = message.value;
+          mHalHandler->setPWM(Channel::PANEL, &message.value);
         }
-      }
-      break;
-    case HandlerPkg::HandlerName::Radio:
-      break;
-    default:
+        break;
+        case MessagePkg::Register::Pressed:{
+          if(message.value == 1)
+          {
+            // turn on PANEL
+            mHalHandler->setPWM(Channel::PANEL, &mLedValue[Channel::PANEL]);
+          }else
+          {
+            // turn off PANEL
+            int value = 254;
+            mHalHandler->setPWM(Channel::PANEL, &value);
+          }
+        }
+        break;
+        default:
+          break;
+        }
+        break;
+        case HandlerPkg::HandlerName::Radio:
+          break;
+        default:
 
-      break;
+          break;
     }
   }
 }

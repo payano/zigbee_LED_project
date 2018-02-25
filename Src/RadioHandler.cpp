@@ -30,32 +30,83 @@ void RadioHandler::addMessage(MessagePkg::Message* message){
 }
 
 void RadioHandler::run() {
-  char one[] = "kitchen/white/light get ON";
-  int da_size = sizeof(one) / sizeof(one[0]);
-//  mMrf24j->send16(0xffff, one, da_size);
-	while(!mQueue->empty()){
-		//talk to MRF24J to send radio messages.
-     // Get element from queue
-     MessagePkg::Message message;
-     mQueue->getMessage(&message);
+  //  mMrf24j->send16(0xffff, one, da_size);
+  auto cathme = "0";
+  while(!mQueue->empty()){
+    //talk to MRF24J to send radio messages.
+    // Get element from queue
+    MessagePkg::Message message;
+    mQueue->getMessage(&message);
 
-     if(message.fromAddress == HandlerPkg::Hal && message.type == MessagePkg::Interrupt){
-       // Incoming message from radio.
-       rx_info_t* radioMessage = mMrf24j->get_rxinfo();
-       std::string rx = (char*)radioMessage->rx_data;
-       auto yop = rx.c_str();
-       auto len = rx.size();
+    switch(message.type){
+    case MessagePkg::Register::Interrupt:{
+      // Incoming message from radio.
 
-       mHalHandler->enableInterrupt(&mWhoami);
+//      mMrf24j->interrupt_handler();
+      tx_info_t* olaf = mMrf24j->get_txinfo();
+      rx_info_t* radioMessage = mMrf24j->get_rxinfo();
+      std::string rx = (char*)radioMessage->rx_data;
+      rx.substr(0, radioMessage->frame_length);
+      auto yop = rx.c_str();
+      auto len = rx.size();
 
-     }
-     mMrf24j->interrupt_handler();
+      auto findChar = rx.find('/');
+      rx = rx.substr(findChar+1); // remove "kitchen/"
+      findChar = rx.find('/');
+      auto destination = rx.substr(0,findChar).c_str();
+      rx = rx.substr(findChar+1); // remove "rgb/" or "white/"
 
-     // Do something with the message
+      findChar = rx.find('/');
+      auto type = rx.substr(0,findChar).c_str();
+      rx = rx.substr(findChar+1); // remove "kitchen/"
 
-	}
+      findChar = rx.find(' ');
+      rx = rx.substr(findChar+1); // remove "set"
+
+      auto value = rx.c_str();
+
+      std::string sendAck = "kitchen/";
+      sendAck.append(destination);
+      sendAck.append("/");
+      sendAck.append(type);
+      sendAck.append("/get ");
+      sendAck.append(value);
+
+      const char* sendMe = sendAck.c_str();
+
+      if(sendAck.size() > 16){
+        HAL_Delay(10);
+        mMrf24j->send16(0x002, sendMe, sendAck.length());
+      }
+
+      auto val = mMrf24j->get_rxbuf();
+      for(unsigned int i = 0 ; i < 60 ; ++i){
+        val[i] = '\0';
+      }
+      //  rx_buf[127]
+//      memset(mMrf24j->get_rxinfo(),0,127);
+      HAL_Delay(50);
+      mHalHandler->enableInterrupt(&mWhoami);
+
+//      mMrf24j->interrupt_handler();
+    }
+    break;
+    case MessagePkg::Register::Pressed:
+    case MessagePkg::Register::Potentiometer:
+    case MessagePkg::Register::Led_Panel_Value:
+    case MessagePkg::Register::Temperature_Value:
+    case MessagePkg::Register::RGB_R_Value:
+    case MessagePkg::Register::RGB_G_Value:
+    case MessagePkg::Register::RGB_B_Value:
+    default:
+      break;
+    }
+
+  }
+  // Do something with the message
 
 }
+
 
 void RadioHandler::init(){
 

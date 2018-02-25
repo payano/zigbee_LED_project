@@ -200,7 +200,7 @@ int main(void)
         item->run();
      }
 
- 	HAL_Delay(1000);
+ 	HAL_Delay(100);
   }
 
 }

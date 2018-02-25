@@ -4,6 +4,7 @@
  */
 
 #include "Mrf24j.h"
+#include <string.h>
 //#include "stm32f3xx_hal_spi.h"
 
 // aMaxPHYPacketSize = 127, from the 802.15.4-2006 standard.
@@ -18,6 +19,7 @@ static int bytes_nodata = bytes_MHR + bytes_FCS; // no_data bytes in PHY payload
 static int ignoreBytes = 0; // bytes to ignore, some modules behaviour.
 
 static boolean bufPHY = false; // flag to buffer all bytes in PHY Payload, or not
+//static boolean bufPHY = true; // flag to buffer all bytes in PHY Payload, or not
 
 volatile uint8_t flag_got_rx;
 volatile uint8_t flag_got_tx;
@@ -135,7 +137,7 @@ word Mrf24j::address16_read(void) {
  * Simple send 16, with acks, not much of anything.. assumes src16 and local pan only.
  * @param data
  */
-void Mrf24j::send16(word dest16, char * data, byte len) {
+void Mrf24j::send16(word dest16, const char * data, byte len) {
   //byte len = strlen(data); // get the length of the char* array
   int i = 0;
   write_long(i++, bytes_MHR); // header length
@@ -284,13 +286,13 @@ void Mrf24j::init(void) {
  * Only the most recent data is ever kept.
  */
 void Mrf24j::interrupt_handler(void) {
+  memset(rx_buf,0,127);
+  memset(rx_info.rx_data,0,116);
   uint8_t last_interrupt = read_short(MRF_INTSTAT);
   if (last_interrupt & MRF_I_RXIF) {
     flag_got_rx++;
     // read out the packet data...
     //noInterrupts();
-//    HAL_NVIC_DisableIRQ(EXTI4_15_IRQn);
-
     rx_disable();
     // read start of rxfifo for, has 2 bytes more added by FCS. frame_length = m + n + 2
     uint8_t frame_length = read_long(0x300);
@@ -306,7 +308,8 @@ void Mrf24j::interrupt_handler(void) {
     // buffer data bytes
     int rd_ptr = 0;
     // from (0x301 + bytes_MHR) to (0x301 + frame_length - bytes_nodata - 1)
-    for (int i = 0; i < rx_datalength(); i++) {
+    auto const dataLength = rx_datalength() + 10;
+    for (int i = 0; i < dataLength; i++) {
       rx_info.rx_data[rd_ptr++] = read_long(0x301 + bytes_MHR + i);
     }
 
@@ -316,9 +319,9 @@ void Mrf24j::interrupt_handler(void) {
     // same as datasheet 0x301 + (m + n + 3) <-- frame_length + 1
     rx_info.rssi = read_long(0x301 + frame_length + 1);
 
+//    HAL_Delay(1);
     rx_enable();
     //interrupts();
-//    HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
   }
   if (last_interrupt & MRF_I_TXNIF) {
     flag_got_tx++;
