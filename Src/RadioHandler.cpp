@@ -45,6 +45,14 @@ void RadioHandler::run() {
 //      mMrf24j->interrupt_handler();
       tx_info_t* olaf = mMrf24j->get_txinfo();
       rx_info_t* radioMessage = mMrf24j->get_rxinfo();
+//
+      if(olaf->tx_ok == 1){
+          memset(radioMessage->rx_data,0,127);
+//          memset(ola,0,127);
+        //  memset(rx_info.rx_data,0,116);
+          mHalHandler->enableInterrupt(&mWhoami);
+        continue;
+      }
       std::string rx = (char*)radioMessage->rx_data;
       rx.substr(0, radioMessage->frame_length);
       auto yop = rx.c_str();
@@ -75,18 +83,18 @@ void RadioHandler::run() {
       const char* sendMe = sendAck.c_str();
 
       if(sendAck.size() > 16){
-        HAL_Delay(10);
         mMrf24j->send16(0x002, sendMe, sendAck.length());
       }
 
-      auto val = mMrf24j->get_rxbuf();
-      for(unsigned int i = 0 ; i < 60 ; ++i){
-        val[i] = '\0';
-      }
+//      auto val = mMrf24j->get_rxbuf();
+//      for(unsigned int i = 0 ; i < 60 ; ++i){
+//        val[i] = '\0';
+//      }
       //  rx_buf[127]
 //      memset(mMrf24j->get_rxinfo(),0,127);
-      HAL_Delay(50);
       mHalHandler->enableInterrupt(&mWhoami);
+//      HAL_Delay(50);
+//      mHalHandler->enableInterrupt(&mWhoami);
 
 //      mMrf24j->interrupt_handler();
     }
@@ -101,7 +109,6 @@ void RadioHandler::run() {
     default:
       break;
     }
-
   }
   // Do something with the message
 
