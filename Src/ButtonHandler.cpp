@@ -39,7 +39,11 @@ void ButtonHandler::run() {
      if(
          message.fromAddress == HandlerPkg::HandlerName::Radio &&
          message.type == MessagePkg::Register::Pressed){
-       mButtonStatus = !mButtonStatus;
+       if(message.value == 1){
+         mButtonStatus = true;
+       }else{
+         mButtonStatus = false;
+       }
        continue;
      }
 

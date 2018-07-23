@@ -10,8 +10,8 @@
 #include "IHandler.h"
 
 namespace HandlerPkg{
-constexpr int BOUNCE_THRESHOLD = 25;
-constexpr int BOUNCE_FALSE_POSITIVE = 1;
+//constexpr int BOUNCE_THRESHOLD = 25;
+//constexpr int BOUNCE_FALSE_POSITIVE = 1;
 constexpr int MIN_POT_VAL = 10;
 constexpr int DELAY_TIME = 100;
 class ButtonHandler: public HandlerPkg::IHandler {

@@ -127,23 +127,23 @@ void LedHandler::run() {
             break;
           }
           case MessagePkg::Register::RGB_R_Value: {
-            mLedValue[Channel::RGB_R] = message.value;
-            mHalHandler->setPWM(Channel::RGB_R, &message.value);
+            mLedValue[Channel::RGB_R] = LED_INVERT_VALUE - message.value;
+            mHalHandler->setPWM(Channel::RGB_R, &mLedValue[Channel::RGB_R]);
             break;
           }
           case MessagePkg::Register::RGB_G_Value: {
-            mLedValue[Channel::RGB_G] = message.value;
-            mHalHandler->setPWM(Channel::RGB_G, &message.value);
+            mLedValue[Channel::RGB_G] = LED_INVERT_VALUE - message.value;
+            mHalHandler->setPWM(Channel::RGB_G, &mLedValue[Channel::RGB_G]);
             break;
           }
           case MessagePkg::Register::RGB_B_Value: {
-            mLedValue[Channel::RGB_B] = message.value;
-            mHalHandler->setPWM(Channel::RGB_B, &message.value);
+            mLedValue[Channel::RGB_B] = LED_INVERT_VALUE - message.value;
+            mHalHandler->setPWM(Channel::RGB_B, &mLedValue[Channel::RGB_B]);
             break;
           }
           case MessagePkg::Register::Led_Panel_Value: {
-            mLedValue[Channel::PANEL] = message.value;
-            mHalHandler->setPWM(Channel::PANEL, &message.value);
+            mLedValue[Channel::PANEL] = LED_INVERT_VALUE - message.value;
+            mHalHandler->setPWM(Channel::PANEL, &mLedValue[Channel::PANEL]);
             break;
           }
           default:

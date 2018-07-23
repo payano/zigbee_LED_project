@@ -95,26 +95,47 @@ void RadioHandler::run() {
         if(strcmp(value,"ON") == 0){
           // if on is sent
           MessagePkg::Message message;
+          MessagePkg::Message buttonMsg;
+
           message.toAddress = HandlerName::Led;
-          message.fromAddress = HandlerName::Radio;
+          message.fromAddress = mWhoami;
           message.type = Register::Pressed;
 
+          buttonMsg.fromAddress = mWhoami;
+          buttonMsg.type = Register::Pressed;
+          buttonMsg.value = 1;
+
           if(strcmp(destination, "white") == 0){
+            //white is PANEL
             message.value = 0; // On for white
+            buttonMsg.toAddress = HandlerName::Button2;
+            mRecipients[HandlerName::Button2]->addMessage(&buttonMsg);
           }else {
             message.value = 1; // On for rgb
+            buttonMsg.toAddress = HandlerName::Button1;
+            mRecipients[HandlerName::Button1]->addMessage(&buttonMsg);
           }
           mRecipients[HandlerName::Led]->addMessage(&message);
         } else {
           MessagePkg::Message message;
+          MessagePkg::Message buttonMsg;
+
           message.toAddress = HandlerName::Led;
           message.fromAddress = HandlerName::Radio;
           message.type = Register::Pressed;
 
+          buttonMsg.fromAddress = mWhoami;
+          buttonMsg.type = Register::Pressed;
+          buttonMsg.value = 0;
+
           if(strcmp(destination, "white") == 0){
             message.value = 2; // Off for white
+            mRecipients[HandlerName::Button2]->addMessage(&buttonMsg);
+
           }else {
             message.value = 3; // Off for rgb
+            mRecipients[HandlerName::Button1]->addMessage(&buttonMsg);
+
           }
           mRecipients[HandlerName::Led]->addMessage(&message);
         }
@@ -176,7 +197,7 @@ void RadioHandler::run() {
         findChar = rgb_value.find(',');
         auto g_value = atoi(rgb_value.substr(0,findChar).c_str()); // remove "kitchen/"
         rgb_value = rgb_value.substr(findChar+1);
-        auto b_value = atoi(rgb_value.substr(0,findChar).c_str()); // remove "kitchen/"
+        auto b_value = atoi(rgb_value.c_str()); // remove "kitchen/"
 
         // Generate messages for LEDHandler
         {
@@ -206,96 +227,6 @@ void RadioHandler::run() {
           mRecipients[HandlerName::Led]->addMessage(&message);
         }
       }
-
-
-//      if(strcmp(destination, "white") == 0){
-//        if(strcmp(value, "ON") == 0){
-//          // if on is sent
-//          MessagePkg::Message message;
-//          message.toAddress = HandlerName::Led;
-//          message.fromAddress = HandlerName::Radio;
-//          message.type = Register::Pressed;
-//          message.value = 0; // On for white
-//          mRecipients[HandlerName::Led]->addMessage(&message);
-//
-//        } else if(strcmp(value, "OFF") == 0){
-//          MessagePkg::Message message;
-//          message.toAddress = HandlerName::Led;
-//          message.fromAddress = HandlerName::Radio;
-//          message.type = Register::Pressed;
-//          message.value = 1; // off for white
-//          mRecipients[HandlerName::Led]->addMessage(&message);
-//        }else{
-//          MessagePkg::Message message;
-//          message.toAddress = HandlerName::Led;
-//          message.fromAddress = HandlerName::Radio;
-//          message.type = Register::RGB_R_Value;
-//          message.value = atoi(value);
-//          mRecipients[HandlerName::Led]->addMessage(&message);
-//        }
-
-//      }else if(strcmp(destination, "rgb") == 0){
-//
-//        if(strcmp(value, "ON") == 0){
-//          // if on is sent
-//          MessagePkg::Message message;
-//          message.toAddress = HandlerName::Led;
-//          message.fromAddress = HandlerName::Radio;
-//          message.type = Register::Pressed;
-//          message.value = 2; // on for rgb
-//          mRecipients[HandlerName::Led]->addMessage(&message);
-//
-//        } else if(strcmp(value, "OFF") == 0){
-//          // if off is sent
-//          MessagePkg::Message message;
-//          message.toAddress = HandlerName::Led;
-//          message.fromAddress = HandlerName::Radio;
-//          message.type = Register::Pressed;
-//          message.value = 3; // off for rgb
-//          mRecipients[HandlerName::Led]->addMessage(&message);
-//        }else{
-//          // if rgb is sent
-//          std::string rgb_value{value};
-//          auto findChar = rgb_value.find(',');
-//          auto r_value = atoi(rgb_value.substr(0,findChar).c_str()); // remove "kitchen/"
-//          rgb_value = rgb_value.substr(findChar+1);
-//          findChar = rgb_value.find(',');
-//          auto g_value = atoi(rgb_value.substr(0,findChar).c_str()); // remove "kitchen/"
-//          rgb_value = rgb_value.substr(findChar+1);
-//          auto b_value = atoi(rgb_value.substr(0,findChar).c_str()); // remove "kitchen/"
-//
-//          // Generate messages for LEDHandler
-//          {
-//            MessagePkg::Message message;
-//            message.toAddress = HandlerName::Led;
-//            message.fromAddress = HandlerName::Radio;
-//            message.type = Register::RGB_R_Value;
-//            message.value = r_value;
-//            mRecipients[HandlerName::Led]->addMessage(&message);
-//          }
-//
-//          {
-//            MessagePkg::Message message;
-//            message.toAddress = HandlerName::Led;
-//            message.fromAddress = HandlerName::Radio;
-//            message.type = Register::RGB_G_Value;
-//            message.value = g_value;
-//            mRecipients[HandlerName::Led]->addMessage(&message);
-//          }
-//
-//          {
-//            MessagePkg::Message message;
-//            message.toAddress = HandlerName::Led;
-//            message.fromAddress = HandlerName::Radio;
-//            message.type = Register::RGB_B_Value;
-//            message.value = b_value;
-//            mRecipients[HandlerName::Led]->addMessage(&message);
-//          }
-//
-//
-//        }
-//      }
-
 
       //      auto val = mMrf24j->get_rxbuf();
 //      for(unsigned int i = 0 ; i < 60 ; ++i){

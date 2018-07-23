@@ -11,6 +11,7 @@
 
 namespace HandlerPkg{
 
+constexpr int LED_INVERT_VALUE = 254;
 class LedHandler: public IHandler {
 private:
   MessagePkg::MessageBox *mQueue;
