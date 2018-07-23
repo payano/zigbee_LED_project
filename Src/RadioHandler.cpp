@@ -30,6 +30,8 @@ void RadioHandler::addMessage(MessagePkg::Message* message){
 }
 
 void RadioHandler::run() {
+  using namespace MessagePkg;
+
   //  mMrf24j->send16(0xffff, one, da_size);
   auto cathme = "0";
   while(!mQueue->empty()){
@@ -83,10 +85,219 @@ void RadioHandler::run() {
       const char* sendMe = sendAck.c_str();
 
       if(sendAck.size() > 16){
+        // 0x002 is Rpi.
         mMrf24j->send16(0x002, sendMe, sendAck.length());
       }
 
-//      auto val = mMrf24j->get_rxbuf();
+      // Send a message to LedHandler.
+
+      if(strcmp(type, "light") == 0){
+        if(strcmp(value,"ON") == 0){
+          // if on is sent
+          MessagePkg::Message message;
+          message.toAddress = HandlerName::Led;
+          message.fromAddress = HandlerName::Radio;
+          message.type = Register::Pressed;
+
+          if(strcmp(destination, "white") == 0){
+            message.value = 0; // On for white
+          }else {
+            message.value = 1; // On for rgb
+          }
+          mRecipients[HandlerName::Led]->addMessage(&message);
+        } else {
+          MessagePkg::Message message;
+          message.toAddress = HandlerName::Led;
+          message.fromAddress = HandlerName::Radio;
+          message.type = Register::Pressed;
+
+          if(strcmp(destination, "white") == 0){
+            message.value = 2; // Off for white
+          }else {
+            message.value = 3; // Off for rgb
+          }
+          mRecipients[HandlerName::Led]->addMessage(&message);
+        }
+      }else if(strcmp(type, "brightness") == 0) {
+        if(strcmp(destination, "rgb") == 0){
+          // if rgb is sent
+          std::string rgb_value{value};
+          auto findChar = rgb_value.find(',');
+          auto r_value = atoi(rgb_value.substr(0,findChar).c_str()); // remove "kitchen/"
+          rgb_value = rgb_value.substr(findChar+1);
+          findChar = rgb_value.find(',');
+          auto g_value = atoi(rgb_value.substr(0,findChar).c_str()); // remove "kitchen/"
+          rgb_value = rgb_value.substr(findChar+1);
+          auto b_value = atoi(rgb_value.substr(0,findChar).c_str()); // remove "kitchen/"
+
+          // Generate messages for LEDHandler
+          {
+            MessagePkg::Message message;
+            message.toAddress = HandlerName::Led;
+            message.fromAddress = HandlerName::Radio;
+            message.type = Register::RGB_R_Value;
+            message.value = r_value;
+            mRecipients[HandlerName::Led]->addMessage(&message);
+          }
+
+          {
+            MessagePkg::Message message;
+            message.toAddress = HandlerName::Led;
+            message.fromAddress = HandlerName::Radio;
+            message.type = Register::RGB_G_Value;
+            message.value = g_value;
+            mRecipients[HandlerName::Led]->addMessage(&message);
+          }
+
+          {
+            MessagePkg::Message message;
+            message.toAddress = HandlerName::Led;
+            message.fromAddress = HandlerName::Radio;
+            message.type = Register::RGB_B_Value;
+            message.value = b_value;
+            mRecipients[HandlerName::Led]->addMessage(&message);
+          }
+        }else{
+          MessagePkg::Message message;
+          message.toAddress = HandlerName::Led;
+          message.fromAddress = HandlerName::Radio;
+          message.type = Register::Led_Panel_Value;
+          message.value = atoi(value);
+          mRecipients[HandlerName::Led]->addMessage(&message);
+        }
+
+
+      }else if(strcmp(type,"rgb") == 0){
+        // if rgb is sent
+        std::string rgb_value{value};
+        auto findChar = rgb_value.find(',');
+        auto r_value = atoi(rgb_value.substr(0,findChar).c_str()); // remove "kitchen/"
+        rgb_value = rgb_value.substr(findChar+1);
+        findChar = rgb_value.find(',');
+        auto g_value = atoi(rgb_value.substr(0,findChar).c_str()); // remove "kitchen/"
+        rgb_value = rgb_value.substr(findChar+1);
+        auto b_value = atoi(rgb_value.substr(0,findChar).c_str()); // remove "kitchen/"
+
+        // Generate messages for LEDHandler
+        {
+          MessagePkg::Message message;
+          message.toAddress = HandlerName::Led;
+          message.fromAddress = HandlerName::Radio;
+          message.type = Register::RGB_R_Value;
+          message.value = r_value;
+          mRecipients[HandlerName::Led]->addMessage(&message);
+        }
+
+        {
+          MessagePkg::Message message;
+          message.toAddress = HandlerName::Led;
+          message.fromAddress = HandlerName::Radio;
+          message.type = Register::RGB_G_Value;
+          message.value = g_value;
+          mRecipients[HandlerName::Led]->addMessage(&message);
+        }
+
+        {
+          MessagePkg::Message message;
+          message.toAddress = HandlerName::Led;
+          message.fromAddress = HandlerName::Radio;
+          message.type = Register::RGB_B_Value;
+          message.value = b_value;
+          mRecipients[HandlerName::Led]->addMessage(&message);
+        }
+      }
+
+
+//      if(strcmp(destination, "white") == 0){
+//        if(strcmp(value, "ON") == 0){
+//          // if on is sent
+//          MessagePkg::Message message;
+//          message.toAddress = HandlerName::Led;
+//          message.fromAddress = HandlerName::Radio;
+//          message.type = Register::Pressed;
+//          message.value = 0; // On for white
+//          mRecipients[HandlerName::Led]->addMessage(&message);
+//
+//        } else if(strcmp(value, "OFF") == 0){
+//          MessagePkg::Message message;
+//          message.toAddress = HandlerName::Led;
+//          message.fromAddress = HandlerName::Radio;
+//          message.type = Register::Pressed;
+//          message.value = 1; // off for white
+//          mRecipients[HandlerName::Led]->addMessage(&message);
+//        }else{
+//          MessagePkg::Message message;
+//          message.toAddress = HandlerName::Led;
+//          message.fromAddress = HandlerName::Radio;
+//          message.type = Register::RGB_R_Value;
+//          message.value = atoi(value);
+//          mRecipients[HandlerName::Led]->addMessage(&message);
+//        }
+
+//      }else if(strcmp(destination, "rgb") == 0){
+//
+//        if(strcmp(value, "ON") == 0){
+//          // if on is sent
+//          MessagePkg::Message message;
+//          message.toAddress = HandlerName::Led;
+//          message.fromAddress = HandlerName::Radio;
+//          message.type = Register::Pressed;
+//          message.value = 2; // on for rgb
+//          mRecipients[HandlerName::Led]->addMessage(&message);
+//
+//        } else if(strcmp(value, "OFF") == 0){
+//          // if off is sent
+//          MessagePkg::Message message;
+//          message.toAddress = HandlerName::Led;
+//          message.fromAddress = HandlerName::Radio;
+//          message.type = Register::Pressed;
+//          message.value = 3; // off for rgb
+//          mRecipients[HandlerName::Led]->addMessage(&message);
+//        }else{
+//          // if rgb is sent
+//          std::string rgb_value{value};
+//          auto findChar = rgb_value.find(',');
+//          auto r_value = atoi(rgb_value.substr(0,findChar).c_str()); // remove "kitchen/"
+//          rgb_value = rgb_value.substr(findChar+1);
+//          findChar = rgb_value.find(',');
+//          auto g_value = atoi(rgb_value.substr(0,findChar).c_str()); // remove "kitchen/"
+//          rgb_value = rgb_value.substr(findChar+1);
+//          auto b_value = atoi(rgb_value.substr(0,findChar).c_str()); // remove "kitchen/"
+//
+//          // Generate messages for LEDHandler
+//          {
+//            MessagePkg::Message message;
+//            message.toAddress = HandlerName::Led;
+//            message.fromAddress = HandlerName::Radio;
+//            message.type = Register::RGB_R_Value;
+//            message.value = r_value;
+//            mRecipients[HandlerName::Led]->addMessage(&message);
+//          }
+//
+//          {
+//            MessagePkg::Message message;
+//            message.toAddress = HandlerName::Led;
+//            message.fromAddress = HandlerName::Radio;
+//            message.type = Register::RGB_G_Value;
+//            message.value = g_value;
+//            mRecipients[HandlerName::Led]->addMessage(&message);
+//          }
+//
+//          {
+//            MessagePkg::Message message;
+//            message.toAddress = HandlerName::Led;
+//            message.fromAddress = HandlerName::Radio;
+//            message.type = Register::RGB_B_Value;
+//            message.value = b_value;
+//            mRecipients[HandlerName::Led]->addMessage(&message);
+//          }
+//
+//
+//        }
+//      }
+
+
+      //      auto val = mMrf24j->get_rxbuf();
 //      for(unsigned int i = 0 ; i < 60 ; ++i){
 //        val[i] = '\0';
 //      }

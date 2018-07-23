@@ -97,6 +97,58 @@ void LedHandler::run() {
         }
         break;
         case HandlerPkg::HandlerName::Radio:
+          switch(message.type){
+          case MessagePkg::Register::Pressed: {
+            switch(message.value){
+            case 0: { // white is set to ON via radio
+              mHalHandler->setPWM(Channel::PANEL, &mLedValue[Channel::PANEL]);
+              break;
+            }
+            case 1: { // rgb is set to ON via radio
+              mHalHandler->setPWM(Channel::RGB_R, &mLedValue[Channel::RGB_R]);
+              mHalHandler->setPWM(Channel::RGB_G, &mLedValue[Channel::RGB_G]);
+              mHalHandler->setPWM(Channel::RGB_B, &mLedValue[Channel::RGB_B]);
+              break;
+            }
+            case 2: { // white is set to OFF via radio
+              int value = 254;
+              mHalHandler->setPWM(Channel::PANEL, &value);
+              break;
+            }
+            case 3: { // rgb is set to OFF via radio
+              int value = 254;
+              mHalHandler->setPWM(Channel::RGB_R, &value);
+              mHalHandler->setPWM(Channel::RGB_G, &value);
+              mHalHandler->setPWM(Channel::RGB_B, &value);
+              break;
+            }
+            }
+
+            break;
+          }
+          case MessagePkg::Register::RGB_R_Value: {
+            mLedValue[Channel::RGB_R] = message.value;
+            mHalHandler->setPWM(Channel::RGB_R, &message.value);
+            break;
+          }
+          case MessagePkg::Register::RGB_G_Value: {
+            mLedValue[Channel::RGB_G] = message.value;
+            mHalHandler->setPWM(Channel::RGB_G, &message.value);
+            break;
+          }
+          case MessagePkg::Register::RGB_B_Value: {
+            mLedValue[Channel::RGB_B] = message.value;
+            mHalHandler->setPWM(Channel::RGB_B, &message.value);
+            break;
+          }
+          case MessagePkg::Register::Led_Panel_Value: {
+            mLedValue[Channel::PANEL] = message.value;
+            mHalHandler->setPWM(Channel::PANEL, &message.value);
+            break;
+          }
+          default:
+            break;
+          }
           break;
         default:
 

@@ -35,6 +35,15 @@ void ButtonHandler::run() {
      // Get element from queue
      MessagePkg::Message message;
      mQueue->getMessage(&message);
+
+     if(
+         message.fromAddress == HandlerPkg::HandlerName::Radio &&
+         message.type == MessagePkg::Register::Pressed){
+       mButtonStatus = !mButtonStatus;
+       continue;
+     }
+
+
      message.fromAddress = mWhoami;
      message.toAddress = HandlerPkg::HandlerName::Led;
 
@@ -61,7 +70,7 @@ void ButtonHandler::run() {
        mRecipients[HandlerName::Led]->addMessage(&message);
 
        // do that here?
-       HAL_Delay(DELAY_TIME*2);
+       HAL_Delay(DELAY_TIME);
        mHalHandler->enableInterrupt(&mWhoami);
        break;
 
