@@ -11,16 +11,18 @@
 
 namespace HandlerPkg{
 
-constexpr int LED_INVERT_VALUE = 254;
+constexpr int LED_INVERT_VALUE = 255;
 class LedHandler: public IHandler {
 private:
   MessagePkg::MessageBox *mQueue;
   HandlerName mWhoami;
   HalHandler* mHalHandler;
   int mLedValue[HandlerPkg::Channel::CHANNEL_SIZE];
+  int mBrightnessValue[HandlerPkg::Channel::CHANNEL_SIZE];
   //RGB_R, RGB_G, RGB_B, LED_PANEL
   IHandler* mRecipients[HandlerName::SIZE];
 
+  int getBrightnessLevel(int *ledValue, int *brightnessValue);
 public:
   LedHandler(HandlerName whoami, HalHandler* halHandler);
   virtual ~LedHandler();

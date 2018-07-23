@@ -6,6 +6,8 @@
  */
 
 #include "LedHandler.h"
+
+
 #include "Message.h"
 #include "HalHandler.h"
 
@@ -19,6 +21,7 @@ LedHandler::LedHandler(HandlerName whoami, HalHandler* halHandler):
   // TODO Auto-generated constructor stub
   for(int i = 0; i < HandlerPkg::Channel::CHANNEL_SIZE; ++i){
     mLedValue[i] = 0;
+    mBrightnessValue[i] = 255;
   }
   //mLedValue[HandlerPkg::Channel::CHANNEL_SIZE] = {0};
 
@@ -105,9 +108,19 @@ void LedHandler::run() {
               break;
             }
             case 1: { // rgb is set to ON via radio
-              mHalHandler->setPWM(Channel::RGB_R, &mLedValue[Channel::RGB_R]);
-              mHalHandler->setPWM(Channel::RGB_G, &mLedValue[Channel::RGB_G]);
-              mHalHandler->setPWM(Channel::RGB_B, &mLedValue[Channel::RGB_B]);
+
+              {
+                int setPWMVal = getBrightnessLevel(&mLedValue[Channel::RGB_R], &mBrightnessValue[Channel::RGB_R]);
+                mHalHandler->setPWM(Channel::RGB_R, &setPWMVal);
+              }
+              {
+                int setPWMVal = getBrightnessLevel(&mLedValue[Channel::RGB_G], &mBrightnessValue[Channel::RGB_G]);
+                mHalHandler->setPWM(Channel::RGB_G, &setPWMVal);
+              }
+              {
+                int setPWMVal = getBrightnessLevel(&mLedValue[Channel::RGB_B], &mBrightnessValue[Channel::RGB_G]);
+                mHalHandler->setPWM(Channel::RGB_B, &setPWMVal);
+              }
               break;
             }
             case 2: { // white is set to OFF via radio
@@ -128,17 +141,38 @@ void LedHandler::run() {
           }
           case MessagePkg::Register::RGB_R_Value: {
             mLedValue[Channel::RGB_R] = LED_INVERT_VALUE - message.value;
-            mHalHandler->setPWM(Channel::RGB_R, &mLedValue[Channel::RGB_R]);
+            int setPWMVal = getBrightnessLevel(&mLedValue[Channel::RGB_R], &mBrightnessValue[Channel::RGB_R]);
+            mHalHandler->setPWM(Channel::RGB_R, &setPWMVal);
+            break;
+          }
+          case MessagePkg::Register::RGB_R_Brightness: {
+            mBrightnessValue[Channel::RGB_R] = message.value;
+            int setPWMVal = getBrightnessLevel(&mLedValue[Channel::RGB_R], &mBrightnessValue[Channel::RGB_R]);
+            mHalHandler->setPWM(Channel::RGB_R, &setPWMVal);
             break;
           }
           case MessagePkg::Register::RGB_G_Value: {
             mLedValue[Channel::RGB_G] = LED_INVERT_VALUE - message.value;
-            mHalHandler->setPWM(Channel::RGB_G, &mLedValue[Channel::RGB_G]);
+            int setPWMVal = getBrightnessLevel(&mLedValue[Channel::RGB_G], &mBrightnessValue[Channel::RGB_G]);
+            mHalHandler->setPWM(Channel::RGB_G, &setPWMVal);
+            break;
+          }
+          case MessagePkg::Register::RGB_G_Brightness: {
+            mBrightnessValue[Channel::RGB_G] = message.value;
+            int setPWMVal = getBrightnessLevel(&mLedValue[Channel::RGB_G], &mBrightnessValue[Channel::RGB_G]);
+            mHalHandler->setPWM(Channel::RGB_G, &setPWMVal);
             break;
           }
           case MessagePkg::Register::RGB_B_Value: {
             mLedValue[Channel::RGB_B] = LED_INVERT_VALUE - message.value;
-            mHalHandler->setPWM(Channel::RGB_B, &mLedValue[Channel::RGB_B]);
+            int setPWMVal = getBrightnessLevel(&mLedValue[Channel::RGB_B], &mBrightnessValue[Channel::RGB_B]);
+            mHalHandler->setPWM(Channel::RGB_B, &setPWMVal);
+            break;
+          }
+          case MessagePkg::Register::RGB_B_Brightness: {
+            mBrightnessValue[Channel::RGB_B] = message.value;
+            int setPWMVal = getBrightnessLevel(&mLedValue[Channel::RGB_B], &mBrightnessValue[Channel::RGB_B]);
+            mHalHandler->setPWM(Channel::RGB_B, &setPWMVal);
             break;
           }
           case MessagePkg::Register::Led_Panel_Value: {
@@ -171,5 +205,14 @@ void LedHandler::init(){
 void LedHandler::addRecipient(IHandler* recipient, HandlerName recipientName){
   mRecipients[recipientName] = recipient;
 }
+
+int LedHandler::getBrightnessLevel(int *ledValue, int *brightnessValue){
+  auto result = (LED_INVERT_VALUE - *ledValue) * (*brightnessValue);
+  if(result == 0){return LED_INVERT_VALUE - result;}
+  result = result / (LED_INVERT_VALUE*1.0);
+  return LED_INVERT_VALUE - ((int)result);
+
+}
+
 
 }

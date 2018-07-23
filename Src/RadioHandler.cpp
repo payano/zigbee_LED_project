@@ -141,23 +141,13 @@ void RadioHandler::run() {
         }
       }else if(strcmp(type, "brightness") == 0) {
         if(strcmp(destination, "rgb") == 0){
-          // if rgb is sent
-          std::string rgb_value{value};
-          auto findChar = rgb_value.find(',');
-          auto r_value = atoi(rgb_value.substr(0,findChar).c_str()); // remove "kitchen/"
-          rgb_value = rgb_value.substr(findChar+1);
-          findChar = rgb_value.find(',');
-          auto g_value = atoi(rgb_value.substr(0,findChar).c_str()); // remove "kitchen/"
-          rgb_value = rgb_value.substr(findChar+1);
-          auto b_value = atoi(rgb_value.substr(0,findChar).c_str()); // remove "kitchen/"
-
           // Generate messages for LEDHandler
           {
             MessagePkg::Message message;
             message.toAddress = HandlerName::Led;
             message.fromAddress = HandlerName::Radio;
-            message.type = Register::RGB_R_Value;
-            message.value = r_value;
+            message.type = Register::RGB_R_Brightness;
+            message.value = atoi(value);
             mRecipients[HandlerName::Led]->addMessage(&message);
           }
 
@@ -165,8 +155,8 @@ void RadioHandler::run() {
             MessagePkg::Message message;
             message.toAddress = HandlerName::Led;
             message.fromAddress = HandlerName::Radio;
-            message.type = Register::RGB_G_Value;
-            message.value = g_value;
+            message.type = Register::RGB_G_Brightness;
+            message.value = atoi(value);
             mRecipients[HandlerName::Led]->addMessage(&message);
           }
 
@@ -174,8 +164,8 @@ void RadioHandler::run() {
             MessagePkg::Message message;
             message.toAddress = HandlerName::Led;
             message.fromAddress = HandlerName::Radio;
-            message.type = Register::RGB_B_Value;
-            message.value = b_value;
+            message.type = Register::RGB_B_Brightness;
+            message.value = atoi(value);
             mRecipients[HandlerName::Led]->addMessage(&message);
           }
         }else{

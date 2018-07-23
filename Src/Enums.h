@@ -9,7 +9,10 @@ enum Register {
   Temperature_Value,
   RGB_R_Value,
   RGB_G_Value,
-  RGB_B_Value
+  RGB_B_Value,
+  RGB_R_Brightness,
+  RGB_G_Brightness,
+  RGB_B_Brightness
 };
 }
 namespace HandlerPkg{
