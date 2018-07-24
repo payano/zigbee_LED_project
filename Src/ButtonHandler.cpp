@@ -36,16 +36,17 @@ void ButtonHandler::run() {
      MessagePkg::Message message;
      mQueue->getMessage(&message);
 
-     if(
-         message.fromAddress == HandlerPkg::HandlerName::Radio &&
-         message.type == MessagePkg::Register::Pressed){
-       if(message.value == 1){
-         mButtonStatus = true;
-       }else{
-         mButtonStatus = false;
-       }
-       continue;
-     }
+     // RADIO
+//     if(
+//         message.fromAddress == HandlerPkg::HandlerName::Radio &&
+//         message.type == MessagePkg::Register::Pressed){
+//       if(message.value == 1){
+//         mButtonStatus = true;
+//       }else{
+//         mButtonStatus = false;
+//       }
+//       continue;
+//     }
 
 
      message.fromAddress = mWhoami;
@@ -53,6 +54,14 @@ void ButtonHandler::run() {
 
      switch(message.type){
      case MessagePkg::Pressed:
+       if(mHalHandler->getCountFinished()){
+         mHalHandler->startCounter(32000);
+    	   mHalHandler->enableInterrupt(&mWhoami);
+       }else{
+    	   mHalHandler->enableInterrupt(&mWhoami);
+    	   break;
+       }
+
        // the button does not know the state of the LED.
        // or should it know the state?
 
@@ -65,6 +74,7 @@ void ButtonHandler::run() {
     	   break;
        }
 
+
        mButtonStatus = !mButtonStatus;
        if(mButtonStatus){
          message.value = 1;
@@ -74,7 +84,7 @@ void ButtonHandler::run() {
        mRecipients[HandlerName::Led]->addMessage(&message);
 
        // do that here?
-       HAL_Delay(DELAY_TIME);
+//       HAL_Delay(DELAY_TIME * 2);
        mHalHandler->enableInterrupt(&mWhoami);
        break;
 

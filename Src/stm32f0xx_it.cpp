@@ -46,7 +46,9 @@ extern DMA_HandleTypeDef hdma_adc;
 
 extern TIM_HandleTypeDef htim14;
 
-/******************************************************************************/
+extern ADC_HandleTypeDef hadc;
+
+/*1*****************************************************************************/
 /*            Cortex-M0 Processor Interruption and Exception Handlers         */ 
 /******************************************************************************/
 
@@ -145,6 +147,8 @@ void EXTI4_15_IRQHandler(void)
   using namespace HandlerPkg;
   HalHandler::setInterrupted(HandlerName::Radio);
 
+
+//  HAL_StatusTypeDef olle = HAL_ADC_Stop_DMA(&hadc);
   HAL_NVIC_DisableIRQ(EXTI4_15_IRQn);
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_9);
 

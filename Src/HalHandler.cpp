@@ -6,20 +6,26 @@
  */
 
 #include "HalHandler.h"
+
+#include <stm32f0xx_hal_def.h>
+
 #include "Message.h"
 #include "stm32f0xx_hal_gpio.h"
 
+#include "stm32f0xx_hal_def.h"
+#include "stm32f031x6.h"
 //#include "stm32f0xx_hal.h"
 
 namespace HandlerPkg{
 bool HalHandler::sInterrupted[HandlerName::SIZE] = {false};
 
-HalHandler::HalHandler(HandlerName whoami, ADC_HandleTypeDef *hadc, TIM_HandleTypeDef *timer, SPI_HandleTypeDef *hspi1):
+HalHandler::HalHandler(HandlerName whoami, ADC_HandleTypeDef *hadc, TIM_HandleTypeDef *timer, TIM_HandleTypeDef *counter, SPI_HandleTypeDef *hspi1):
       mAdcBuffer(nullptr),
       mAdcBufferLen(0),
       mWhoami(whoami),
       mHadc(hadc),
       mTimer(timer),
+      mCounter(counter),
       mSpi(hspi1){
 
   for(int i = 0; i < PWM_CHANNELS; ++i){
@@ -160,13 +166,27 @@ void HalHandler::enableInterrupt(const HandlerName *handler){
   switch(*handler){
   case Hal:
     // this is to be handled some how.
+    if(mHadc->Instance == nullptr){mHadc->Instance = ADC1;}
     HAL_ADC_Start_DMA(mHadc, mAdcBuffer,mAdcBufferLen);
+//  {
+//    HAL_StatusTypeDef oolleb = HAL_ADC_Stop(mHadc);
+//    HAL_StatusTypeDef oolle = HAL_ADC_Start_DMA(mHadc, mAdcBuffer,mAdcBufferLen);
+//    if(oolle == HAL_BUSY){
+//      HAL_StatusTypeDef oolle = HAL_ADC_Start_DMA(mHadc, mAdcBuffer,mAdcBufferLen);
+//    }
+//    break;
+//  }
     break;
   case Led:
     //led has PWM, no interrupts.
     break;
   case Radio:
+  {
+
     HAL_NVIC_EnableIRQ(radio);
+    break;
+  }
+
     break;
   case Button1:
     HAL_NVIC_EnableIRQ(button[0]);
@@ -200,13 +220,26 @@ bool HalHandler::readGpio(const HandlerName *handler){
   }
   return (HAL_GPIO_ReadPin(GPIOx, GPIO_Pin) == GPIO_PIN_SET) ? true : false;
 }
+
+void HalHandler::startCounter(const int value){
+  HAL_TIM_Base_Start(mCounter);
+
+}
+
+bool HalHandler::getCountFinished(){
+  return mCounter->Instance->CNT != mCounter->Instance->ARR ? true : false;
+}
+
+
 void HalHandler::disableInterrupt(const HandlerName *handler){
   sInterrupted[*handler] = false;
 
   switch(*handler){
   case Hal:
+//    HAL_ADC_Start_DMA(mHadc, mAdcBuffer,mAdcBufferLen);
+
     // this is to be handled some how.
-    HAL_ADC_Start_DMA(mHadc, mAdcBuffer,mAdcBufferLen);
+//    HAL_ADC_Start_DMA(mHadc, mAdcBuffer,mAdcBufferLen);
     break;
   case Led:
     //led has PWM, no interrupts.

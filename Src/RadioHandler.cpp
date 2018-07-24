@@ -40,6 +40,7 @@ void RadioHandler::run() {
     MessagePkg::Message message;
     mQueue->getMessage(&message);
 
+
     switch(message.type){
     case MessagePkg::Register::Interrupt:{
       // Incoming message from radio.
@@ -109,11 +110,11 @@ void RadioHandler::run() {
             //white is PANEL
             message.value = 0; // On for white
             buttonMsg.toAddress = HandlerName::Button2;
-            mRecipients[HandlerName::Button2]->addMessage(&buttonMsg);
+//            mRecipients[HandlerName::Button2]->addMessage(&buttonMsg);
           }else {
             message.value = 1; // On for rgb
             buttonMsg.toAddress = HandlerName::Button1;
-            mRecipients[HandlerName::Button1]->addMessage(&buttonMsg);
+//            mRecipients[HandlerName::Button1]->addMessage(&buttonMsg);
           }
           mRecipients[HandlerName::Led]->addMessage(&message);
         } else {
@@ -130,11 +131,11 @@ void RadioHandler::run() {
 
           if(strcmp(destination, "white") == 0){
             message.value = 2; // Off for white
-            mRecipients[HandlerName::Button2]->addMessage(&buttonMsg);
+//            mRecipients[HandlerName::Button2]->addMessage(&buttonMsg);
 
           }else {
             message.value = 3; // Off for rgb
-            mRecipients[HandlerName::Button1]->addMessage(&buttonMsg);
+//            mRecipients[HandlerName::Button1]->addMessage(&buttonMsg);
 
           }
           mRecipients[HandlerName::Led]->addMessage(&message);
@@ -224,6 +225,7 @@ void RadioHandler::run() {
 //      }
       //  rx_buf[127]
 //      memset(mMrf24j->get_rxinfo(),0,127);
+
       mHalHandler->enableInterrupt(&mWhoami);
 //      HAL_Delay(50);
 //      mHalHandler->enableInterrupt(&mWhoami);

@@ -9,7 +9,6 @@
 #include "IHandler.h"
 #include "stm32f0xx_hal.h"
 #include "stm32f0xx_hal_adc.h"
-#include <memory>
 
 namespace HandlerPkg{
 constexpr int INTERRUPT_LENGTH = 3;
@@ -27,7 +26,7 @@ private:
   uint32_t mAdcBufferLen;
   HandlerName mWhoami;
   ADC_HandleTypeDef *mHadc;
-  TIM_HandleTypeDef *mTimer;
+  TIM_HandleTypeDef *mTimer, *mCounter;
   SPI_HandleTypeDef *mSpi;
   uint16_t pwmPulseValues[PWM_CHANNELS];
   IHandler* mRecipients[HandlerName::SIZE];
@@ -35,7 +34,7 @@ private:
   TIM_OC_InitTypeDef* pwmConfig[PWM_CHANNELS];
 
 public:
-  HalHandler(HandlerName whoami, ADC_HandleTypeDef *hadc, TIM_HandleTypeDef *timer, SPI_HandleTypeDef *hspi1);
+  HalHandler(HandlerName whoami, ADC_HandleTypeDef *hadc, TIM_HandleTypeDef *timer, TIM_HandleTypeDef *counter, SPI_HandleTypeDef *hspi1);
   virtual ~HalHandler();
 
   //static void putInterruptData(uint32_t InterruptIncData[3]);
@@ -53,6 +52,8 @@ public:
   virtual int potentiometerToButtonValue(const uint32_t* value);
   void addRecipient(IHandler* recipient, HandlerName recipientName) override;
   bool readGpio(const HandlerName *handler);
+  void startCounter(const int value);
+  bool getCountFinished();
 
 };
 }

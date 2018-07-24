@@ -52,6 +52,7 @@ DMA_HandleTypeDef hdma_adc;
 SPI_HandleTypeDef hspi1;
 
 TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim17;
 
 constexpr int ADC_BUF_LEN = 3;
 uint32_t ADC_BUF[ADC_BUF_LEN];
@@ -63,6 +64,7 @@ static void MX_DMA_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_ADC_Init(void);
+static void MX_TIM17_Init(void);
 
 extern "C" void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
@@ -85,6 +87,7 @@ int main(void)
   MX_SPI1_Init();
   MX_TIM3_Init();
   MX_ADC_Init();
+  MX_TIM17_Init();
 
   // IMPORTANT TO PLACE HANDLERS IN RIGHT ORDER,
   // CHECK IHANDLER.H
@@ -143,7 +146,7 @@ int main(void)
 
   IHandler* mHandlers[HandlerName::SIZE];
 
-  HalHandler* Hal             = new HalHandler(HandlerName::Hal, &hadc, &htim3, &hspi1);
+  HalHandler* Hal             = new HalHandler(HandlerName::Hal, &hadc, &htim3,&htim17, &hspi1);
   ButtonHandler* button1      = new ButtonHandler(HandlerName::Button1, Hal);
   ButtonHandler* button2      = new ButtonHandler(HandlerName::Button2, Hal);
   LedHandler* Led             = new LedHandler(HandlerName::Led, Hal);
@@ -202,17 +205,14 @@ int main(void)
      for(IHandler* item : mHandlers){
         item->run();
      }
-
  	HAL_Delay(100);
   }
 
 }
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
-  if(hadc->Instance == ADC1){
     using namespace HandlerPkg;
     HalHandler::setInterrupted(HandlerName::Hal);
-  }
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
@@ -415,6 +415,24 @@ static void MX_TIM3_Init(void)
 
 }
 
+/* TIM17 init function */
+static void MX_TIM17_Init(void)
+{
+
+  htim17.Instance = TIM17;
+  htim17.Init.Prescaler = 100;
+  htim17.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim17.Init.Period = 100;
+  htim17.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim17.Init.RepetitionCounter = 0;
+  htim17.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim17) != HAL_OK)
+  {
+    while(1){;}
+//    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
 /**
   * Enable DMA controller clock
   */
