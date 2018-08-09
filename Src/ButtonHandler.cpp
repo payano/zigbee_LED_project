@@ -36,77 +36,79 @@ void ButtonHandler::run() {
      MessagePkg::Message message;
      mQueue->getMessage(&message);
 
-     // RADIO
-//     if(
-//         message.fromAddress == HandlerPkg::HandlerName::Radio &&
-//         message.type == MessagePkg::Register::Pressed){
-//       if(message.value == 1){
-//         mButtonStatus = true;
-//       }else{
-//         mButtonStatus = false;
-//       }
-//       continue;
-//     }
+     switch(message.fromAddress){
+     case HandlerPkg::Hal:
+       message.fromAddress = mWhoami;
+       message.toAddress = HandlerPkg::HandlerName::Led;
+
+       switch(message.type){
+       case MessagePkg::Pressed:
+         if(mHalHandler->getCountFinished()){
+           mHalHandler->startCounter(32000);
+           mHalHandler->enableInterrupt(&mWhoami);
+         }else{
+           mHalHandler->enableInterrupt(&mWhoami);
+           break;
+         }
+
+         // the button does not know the state of the LED.
+         // or should it know the state?
+
+         // Delay and check if the button is still pressed.
+         HAL_Delay(DELAY_TIME);
+
+         if(!mHalHandler->readGpio(&mWhoami)){
+           // Button is not pressed anymore.
+           mHalHandler->enableInterrupt(&mWhoami);
+           break;
+         }
 
 
-     message.fromAddress = mWhoami;
-     message.toAddress = HandlerPkg::HandlerName::Led;
-
-     switch(message.type){
-     case MessagePkg::Pressed:
-       if(mHalHandler->getCountFinished()){
-         mHalHandler->startCounter(32000);
-    	   mHalHandler->enableInterrupt(&mWhoami);
-       }else{
-    	   mHalHandler->enableInterrupt(&mWhoami);
-    	   break;
-       }
-
-       // the button does not know the state of the LED.
-       // or should it know the state?
-
-       // Delay and check if the button is still pressed.
-       HAL_Delay(DELAY_TIME);
-
-       if(!mHalHandler->readGpio(&mWhoami)){
-         // Button is not pressed anymore.
-    	   mHalHandler->enableInterrupt(&mWhoami);
-    	   break;
-       }
+         mButtonStatus = !mButtonStatus;
+         if(mButtonStatus){
+           message.value = 1;
+         }else{
+           message.value = 0;
+         }
 
 
-       mButtonStatus = !mButtonStatus;
-       if(mButtonStatus){
-         message.value = 1;
-       }else{
-         message.value = 0;
-       }
-       mRecipients[HandlerName::Led]->addMessage(&message);
-
-       // do that here?
-//       HAL_Delay(DELAY_TIME * 2);
-       mHalHandler->enableInterrupt(&mWhoami);
-       break;
-
-     case MessagePkg::Potentiometer:
-     {
-       int diff = mPotentiometerValue - message.value;
-       if(diff < 0){diff *= -1;}
-       if(message.value > (254-MIN_POT_VAL)){
-         message.value = (254-MIN_POT_VAL);
-       }
-
-       if(mButtonStatus && diff > 2){
-         // if button is "off", don't send potentiometer information
          mRecipients[HandlerName::Led]->addMessage(&message);
-         mPotentiometerValue = message.value;
+
+         // do that here?
+         //       HAL_Delay(DELAY_TIME * 2);
+         mHalHandler->enableInterrupt(&mWhoami);
+         break;
+
+       case MessagePkg::Potentiometer:
+       {
+         int diff = mPotentiometerValue - message.value;
+         if(diff < 0){diff *= -1;}
+         if(message.value > (254-MIN_POT_VAL)){
+           message.value = (254-MIN_POT_VAL);
+         }
+
+         if(mButtonStatus && diff > 2){
+           // if button is "off", don't send potentiometer information
+           mRecipients[HandlerName::Led]->addMessage(&message);
+           mPotentiometerValue = message.value;
+         }
        }
-     }
        break;
 
-     default:
-       // this is not meant for LED.
+       default:
+         // this is not meant for LED.
+         break;
+       }
        break;
+       case HandlerPkg::Radio:
+         if(message.value == 1){
+           mButtonStatus = true;
+         }else{
+           mButtonStatus = false;
+         }
+         break;
+       default:
+         break;
      }
    }
 

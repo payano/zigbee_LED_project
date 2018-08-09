@@ -58,8 +58,8 @@ void RadioHandler::run() {
       }
       std::string rx = (char*)radioMessage->rx_data;
       rx.substr(0, radioMessage->frame_length);
-      auto yop = rx.c_str();
-      auto len = rx.size();
+//      auto yop = rx.c_str();
+//      auto len = rx.size();
 
       auto findChar = rx.find('/');
       rx = rx.substr(findChar+1); // remove "kitchen/"
@@ -110,11 +110,11 @@ void RadioHandler::run() {
             //white is PANEL
             message.value = 0; // On for white
             buttonMsg.toAddress = HandlerName::Button2;
-//            mRecipients[HandlerName::Button2]->addMessage(&buttonMsg);
+            mRecipients[HandlerName::Button2]->addMessage(&buttonMsg);
           }else {
             message.value = 1; // On for rgb
             buttonMsg.toAddress = HandlerName::Button1;
-//            mRecipients[HandlerName::Button1]->addMessage(&buttonMsg);
+            mRecipients[HandlerName::Button1]->addMessage(&buttonMsg);
           }
           mRecipients[HandlerName::Led]->addMessage(&message);
         } else {
@@ -129,13 +129,14 @@ void RadioHandler::run() {
           buttonMsg.type = Register::Pressed;
           buttonMsg.value = 0;
 
+          // Perhaps make something more dynamic..
           if(strcmp(destination, "white") == 0){
             message.value = 2; // Off for white
-//            mRecipients[HandlerName::Button2]->addMessage(&buttonMsg);
+            mRecipients[HandlerName::Button2]->addMessage(&buttonMsg);
 
           }else {
             message.value = 3; // Off for rgb
-//            mRecipients[HandlerName::Button1]->addMessage(&buttonMsg);
+            mRecipients[HandlerName::Button1]->addMessage(&buttonMsg);
 
           }
           mRecipients[HandlerName::Led]->addMessage(&message);
@@ -219,18 +220,8 @@ void RadioHandler::run() {
         }
       }
 
-      //      auto val = mMrf24j->get_rxbuf();
-//      for(unsigned int i = 0 ; i < 60 ; ++i){
-//        val[i] = '\0';
-//      }
-      //  rx_buf[127]
-//      memset(mMrf24j->get_rxinfo(),0,127);
-
       mHalHandler->enableInterrupt(&mWhoami);
-//      HAL_Delay(50);
-//      mHalHandler->enableInterrupt(&mWhoami);
 
-//      mMrf24j->interrupt_handler();
     }
     break;
     case MessagePkg::Register::Pressed:
