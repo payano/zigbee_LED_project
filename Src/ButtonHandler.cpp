@@ -51,9 +51,6 @@ void ButtonHandler::run() {
            break;
          }
 
-         // the button does not know the state of the LED.
-         // or should it know the state?
-
          // Delay and check if the button is still pressed.
          HAL_Delay(DELAY_TIME);
 
@@ -63,7 +60,7 @@ void ButtonHandler::run() {
            break;
          }
 
-
+         // Button has changed status, someone pressed it.
          mButtonStatus = !mButtonStatus;
          if(mButtonStatus){
            message.value = 1;
@@ -71,26 +68,47 @@ void ButtonHandler::run() {
            message.value = 0;
          }
 
-
          mRecipients[HandlerName::Led]->addMessage(&message);
-
-         // do that here?
-         //       HAL_Delay(DELAY_TIME * 2);
          mHalHandler->enableInterrupt(&mWhoami);
+
+         // Inform Home Assistant that a change has occurred.
+         {
+           MessagePkg::Message message;
+           message.fromAddress = mWhoami;
+           message.toAddress = HandlerPkg::HandlerName::Radio;
+           message.value = mButtonStatus;
+           message.type = MessagePkg::Register::Pressed;
+           mRecipients[HandlerName::Radio]->addMessage(&message);
+         }
+
          break;
 
        case MessagePkg::Potentiometer:
        {
-         int diff = mPotentiometerValue - message.value;
-         if(diff < 0){diff *= -1;}
-         if(message.value > (254-MIN_POT_VAL)){
-           message.value = (254-MIN_POT_VAL);
+         if(mButtonStatus == false){break;}
+
+         if(message.value > (MAX_VALUE-MIN_POT_VAL)){
+           message.value = (MAX_VALUE-MIN_POT_VAL);
          }
 
-         if(mButtonStatus && diff > 2){
+         int diff = mPotentiometerValue - message.value;
+         if(diff < 0){diff *= -1;}
+
+
+         if(diff > 2){
            // if button is "off", don't send potentiometer information
            mRecipients[HandlerName::Led]->addMessage(&message);
            mPotentiometerValue = message.value;
+
+           // Inform Home Assistant that a change has occurred.
+           {
+             MessagePkg::Message radioMessage;
+             radioMessage.fromAddress = mWhoami;
+             radioMessage.toAddress = HandlerPkg::HandlerName::Radio;
+             radioMessage.value = MAX_VALUE - message.value;
+             radioMessage.type = MessagePkg::Register::Potentiometer;
+             mRecipients[HandlerName::Radio]->addMessage(&radioMessage);
+           }
          }
        }
        break;

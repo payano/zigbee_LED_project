@@ -10,6 +10,7 @@
 #include "HalHandler.h"
 #include "Mrf24j.h"
 #include <string.h>
+
 namespace HandlerPkg {
 RadioHandler::RadioHandler(HandlerName whoami, HalHandler* halHandler, Mrf24j* mrf24j):
                mQueue(new MessagePkg::MessageBox(10)),
@@ -33,7 +34,6 @@ void RadioHandler::run() {
   using namespace MessagePkg;
 
   //  mMrf24j->send16(0xffff, one, da_size);
-  auto cathme = "0";
   while(!mQueue->empty()){
     //talk to MRF24J to send radio messages.
     // Get element from queue
@@ -45,21 +45,16 @@ void RadioHandler::run() {
     case MessagePkg::Register::Interrupt:{
       // Incoming message from radio.
 
-//      mMrf24j->interrupt_handler();
-      tx_info_t* olaf = mMrf24j->get_txinfo();
+      tx_info_t* txInfo = mMrf24j->get_txinfo();
       rx_info_t* radioMessage = mMrf24j->get_rxinfo();
 //
-      if(olaf->tx_ok == 1){
+      if(txInfo->tx_ok == 1){
           memset(radioMessage->rx_data,0,127);
-//          memset(ola,0,127);
-        //  memset(rx_info.rx_data,0,116);
           mHalHandler->enableInterrupt(&mWhoami);
         continue;
       }
       std::string rx = (char*)radioMessage->rx_data;
       rx.substr(0, radioMessage->frame_length);
-//      auto yop = rx.c_str();
-//      auto len = rx.size();
 
       auto findChar = rx.find('/');
       rx = rx.substr(findChar+1); // remove "kitchen/"
@@ -87,7 +82,7 @@ void RadioHandler::run() {
 
       if(sendAck.size() > 16){
         // 0x002 is Rpi.
-        mMrf24j->send16(0x002, sendMe, sendAck.length());
+        mMrf24j->send16(HOME_ASSISTANT, sendMe, sendAck.length());
       }
 
       // Send a message to LedHandler.
@@ -225,7 +220,46 @@ void RadioHandler::run() {
     }
     break;
     case MessagePkg::Register::Pressed:
+    {
+      std::string radioMessage = "kitchen/";
+
+      if(message.fromAddress == HandlerName::Button1){
+        radioMessage.append("rgb");
+      }else{
+        radioMessage.append("white");
+      }
+
+      radioMessage.append("/light/get ");
+
+      if(message.value == 1){
+        radioMessage.append("ON");
+      }else{
+        radioMessage.append("OFF");
+      }
+
+      mMrf24j->send16(HOME_ASSISTANT, radioMessage.c_str(), radioMessage.length());
+    }
+      break;
     case MessagePkg::Register::Potentiometer:
+    {
+      std::string radioMessage = "kitchen/";
+
+      if(message.fromAddress == HandlerName::Button1){
+        radioMessage.append("rgb");
+      }else{
+        radioMessage.append("white");
+      }
+
+      radioMessage.append("/brightness/get ");
+      if(message.value == 0){message.value = 1;}
+      itoa(radioMessage, message.value);
+      mMrf24j->send16(HOME_ASSISTANT, radioMessage.c_str(), radioMessage.length());
+      HAL_Delay(10);
+
+
+    }
+      break;
+
     case MessagePkg::Register::Led_Panel_Value:
     case MessagePkg::Register::Temperature_Value:
     case MessagePkg::Register::RGB_R_Value:
@@ -239,19 +273,39 @@ void RadioHandler::run() {
 
 }
 
+void RadioHandler::itoa(std::string& message, int& value){
+  // can only take 0-999;
+  int hundred = (value/100)%10;
+  int tens = (value/10)%10;
+  int ones = value%10;
 
+  if(hundred > 0){ message += '0' + hundred; }
+  if(tens > 0 || hundred > 0){ message += '0' + tens; }
+  message += '0' + ones;
+}
 void RadioHandler::init(){
 
+  // Start up the radio
   HAL_Delay(20);
 
   mMrf24j->reset();
   mMrf24j->init();
 
+  // Network id
   mMrf24j->set_pan(0x0023);
   // This is _our_ address
   mMrf24j->address16_write(0x6001);
   // Implement here
   mMrf24j->set_interrupts();
+
+  // Tell radio that lights is off.
+  char rgb[] = "kitchen/rgb/light/get OFF";
+  char white[] = "kitchen/white/light/get OFF";
+  mMrf24j->send16(HOME_ASSISTANT, rgb, sizeof(rgb)/sizeof(rgb[0]));
+  HAL_Delay(50);
+  mMrf24j->send16(HOME_ASSISTANT, white, sizeof(white)/sizeof(white[0]));
+
+
 }
 
 void RadioHandler::addRecipient(IHandler* recipient, HandlerName recipientName){

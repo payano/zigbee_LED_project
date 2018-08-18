@@ -13,6 +13,8 @@ class Mrf24j;
 
 namespace HandlerPkg{
 
+constexpr int HOME_ASSISTANT = 0x02;
+
 class RadioHandler: public IHandler {
 private:
    MessagePkg::MessageBox *mQueue;
@@ -27,6 +29,7 @@ public:
    void run() override;
    void init() override;
    void addRecipient(IHandler* recipient, HandlerName recipientName) override;
+   void itoa(std::string& message, int& value);
 };
 
 }

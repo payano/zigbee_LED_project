@@ -169,7 +169,10 @@ int main(void)
   mHandlers[HandlerName::Hal]->addRecipient(mHandlers[HandlerName::Radio],HandlerName::Radio);
 
   mHandlers[HandlerName::Button1]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
+  mHandlers[HandlerName::Button1]->addRecipient(mHandlers[HandlerName::Radio], HandlerName::Radio);
+
   mHandlers[HandlerName::Button2]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
+  mHandlers[HandlerName::Button2]->addRecipient(mHandlers[HandlerName::Radio], HandlerName::Radio);
 
   mHandlers[HandlerName::Radio]->addRecipient(mHandlers[HandlerName::Led], HandlerName::Led);
   mHandlers[HandlerName::Radio]->addRecipient(mHandlers[HandlerName::Button1], HandlerName::Button1);
