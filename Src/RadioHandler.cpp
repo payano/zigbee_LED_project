@@ -250,12 +250,26 @@ void RadioHandler::run() {
         radioMessage.append("white");
       }
 
+      {
       radioMessage.append("/brightness/get ");
       if(message.value == 0){message.value = 1;}
       itoa(radioMessage, message.value);
       mMrf24j->send16(HOME_ASSISTANT, radioMessage.c_str(), radioMessage.length());
       HAL_Delay(10);
+      }
 
+      if(message.fromAddress == HandlerName::Button1){
+        // RGB needs to reset aswell
+        std::string radioMessage = "kitchen/rgb/rgb/get ";
+        itoa(radioMessage, message.value);
+        radioMessage += ",";
+        itoa(radioMessage, message.value);
+        radioMessage += ",";
+        itoa(radioMessage, message.value);
+
+        mMrf24j->send16(HOME_ASSISTANT, radioMessage.c_str(), radioMessage.length());
+        HAL_Delay(10);
+      }
 
     }
       break;
@@ -301,11 +315,15 @@ void RadioHandler::init(){
   // Tell radio that lights is off.
   char rgb[] = "kitchen/rgb/light/get OFF";
   char white[] = "kitchen/white/light/get OFF";
+  // RGB also needs to reset RGB colors
+  char rgbcolor[] = "kitchen/rgb/rgb/get 127,127,127";
+
   mMrf24j->send16(HOME_ASSISTANT, rgb, sizeof(rgb)/sizeof(rgb[0]));
-  HAL_Delay(50);
+  HAL_Delay(10);
+  mMrf24j->send16(HOME_ASSISTANT, rgbcolor, sizeof(rgbcolor)/sizeof(rgbcolor[0]));
+  HAL_Delay(10);
   mMrf24j->send16(HOME_ASSISTANT, white, sizeof(white)/sizeof(white[0]));
-
-
+  HAL_Delay(10);
 }
 
 void RadioHandler::addRecipient(IHandler* recipient, HandlerName recipientName){
