@@ -145,13 +145,16 @@ void EXTI4_15_IRQHandler(void)
   /* USER CODE BEGIN EXTI4_15_IRQn 0 */
   // MRF24J
   using namespace HandlerPkg;
+  static const HandlerName radio = HandlerName::Radio;
   HalHandler::setInterrupted(HandlerName::Radio);
-
 
 //  HAL_StatusTypeDef olle = HAL_ADC_Stop_DMA(&hadc);
   HAL_NVIC_DisableIRQ(EXTI4_15_IRQn);
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_9);
 
+  // Interrupt routine from radio is done!
+  // Enable interrupt again
+  HalHandler::getInstance()->enableInterrupt(&radio);
   /* USER CODE END EXTI4_15_IRQn 0 */
   /* USER CODE BEGIN EXTI4_15_IRQn 1 */
 

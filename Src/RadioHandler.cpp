@@ -50,7 +50,8 @@ void RadioHandler::run() {
 //
       if(txInfo->tx_ok == 1){
           memset(radioMessage->rx_data,0,127);
-          mHalHandler->enableInterrupt(&mWhoami);
+          // Disabled interrupt in radiohandler
+//          mHalHandler->enableInterrupt(&mWhoami);
         continue;
       }
       std::string rx = (char*)radioMessage->rx_data;
@@ -214,8 +215,8 @@ void RadioHandler::run() {
           mRecipients[HandlerName::Led]->addMessage(&message);
         }
       }
-
-      mHalHandler->enableInterrupt(&mWhoami);
+      // Disabled interrupt in radiohandler
+//      mHalHandler->enableInterrupt(&mWhoami);
 
     }
     break;
