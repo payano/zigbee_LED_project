@@ -208,7 +208,7 @@ int main(void)
      for(IHandler* item : mHandlers){
         item->run();
      }
- 	HAL_Delay(100);
+ 	HAL_Delay(10);
   }
 
 }
