@@ -33,12 +33,8 @@ private:
   static bool sInterrupted[HandlerName::SIZE]; //static
   TIM_OC_InitTypeDef* pwmConfig[PWM_CHANNELS];
 
-//  static HalHandler* mInstance;
-  static HalHandler* mInstance;
-  HalHandler(HandlerName whoami, ADC_HandleTypeDef *hadc, TIM_HandleTypeDef *timer, TIM_HandleTypeDef *counter, SPI_HandleTypeDef *hspi1);
 public:
-  static HalHandler* createInstance(HandlerName whoami, ADC_HandleTypeDef *hadc, TIM_HandleTypeDef *timer, TIM_HandleTypeDef *counter, SPI_HandleTypeDef *hspi1);
-  static HalHandler* getInstance();
+  HalHandler(HandlerName whoami, ADC_HandleTypeDef *hadc, TIM_HandleTypeDef *timer, TIM_HandleTypeDef *counter, SPI_HandleTypeDef *hspi1);
   virtual ~HalHandler();
 
   //static void putInterruptData(uint32_t InterruptIncData[3]);

@@ -18,19 +18,6 @@
 
 namespace HandlerPkg{
 bool HalHandler::sInterrupted[HandlerName::SIZE] = {false};
-HalHandler* HalHandler::mInstance(nullptr);
-
-HalHandler* HalHandler::createInstance(HandlerName whoami, ADC_HandleTypeDef *hadc, TIM_HandleTypeDef *timer, TIM_HandleTypeDef *counter, SPI_HandleTypeDef *hspi1){
-  if(nullptr == mInstance){
-    mInstance = new HalHandler(whoami, hadc, timer, counter, hspi1);
-  }
-  return mInstance;
-}
-
-HalHandler* HalHandler::getInstance(){
-  return mInstance;
-}
-
 
 HalHandler::HalHandler(HandlerName whoami, ADC_HandleTypeDef *hadc, TIM_HandleTypeDef *timer, TIM_HandleTypeDef *counter, SPI_HandleTypeDef *hspi1):
       mAdcBuffer(nullptr),
@@ -195,6 +182,7 @@ void HalHandler::enableInterrupt(const HandlerName *handler){
     break;
   case Radio:
   {
+
     HAL_NVIC_EnableIRQ(radio);
     break;
   }
