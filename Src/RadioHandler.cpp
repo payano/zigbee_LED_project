@@ -83,6 +83,7 @@ void RadioHandler::run() {
       if(sendAck.size() > 16){
         // 0x002 is Rpi.
         mMrf24j->send16(HOME_ASSISTANT, sendMe, sendAck.length());
+        HAL_Delay(50);
       }
 
       // Send a message to LedHandler.
@@ -269,7 +270,7 @@ void RadioHandler::run() {
         itoa(radioMessage, message.value);
 
         mMrf24j->send16(HOME_ASSISTANT, radioMessage.c_str(), radioMessage.length());
-        HAL_Delay(10);
+        HAL_Delay(50);
       }
 
     }
