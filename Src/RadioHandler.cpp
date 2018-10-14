@@ -271,6 +271,10 @@ void RadioHandler::run() {
 
         mMrf24j->send16(HOME_ASSISTANT, radioMessage.c_str(), radioMessage.length());
         HAL_Delay(50);
+        mMrf24j->send16(HOME_ASSISTANT, radioMessage.c_str(), radioMessage.length());
+        HAL_Delay(50);
+        mMrf24j->send16(HOME_ASSISTANT, radioMessage.c_str(), radioMessage.length());
+        HAL_Delay(50);
       }
 
     }
