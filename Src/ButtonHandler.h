@@ -11,7 +11,7 @@
 
 namespace HandlerPkg{
 constexpr int MAX_VALUE =  255;
-constexpr int MIN_POT_VAL = 40;
+constexpr int MIN_POT_VAL = 8;
 constexpr int DELAY_TIME = 10;
 class ButtonHandler: public HandlerPkg::IHandler {
 private:
